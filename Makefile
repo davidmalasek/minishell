@@ -20,7 +20,7 @@ OBJ = $(SRC:src/%.c=$(OBJ_DIR)/%.o)
 all: $(NAME)
 
 $(NAME): $(OBJ) $(LIBFT_LIB)
-	$(CC) $(CFLAGS) -o $(NAME) $(OBJ) $(LIBFT_LIB)
+	$(CC) $(CFLAGS) -o $(NAME) $(OBJ) $(LIBFT_LIB) -lreadline
 
 # Only rebuild libft when the library has changed
 $(LIBFT_LIB):

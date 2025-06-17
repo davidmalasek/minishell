@@ -6,7 +6,7 @@
 /*   By: tomasklaus <tomasklaus@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 15:31:41 by dmalasek          #+#    #+#             */
-/*   Updated: 2025/05/15 16:26:29 by tomasklaus       ###   ########.fr       */
+/*   Updated: 2025/06/17 16:59:55 by tomasklaus       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,4 +16,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <readline/readline.h>
+#include <readline/history.h>
+
+#include "../libft/libft.h"
+
 #endif
