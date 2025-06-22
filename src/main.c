@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tomasklaus <tomasklaus@student.42.fr>      +#+  +:+       +#+        */
+/*   By: dmalasek <dmalasek@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 15:30:36 by dmalasek          #+#    #+#             */
-/*   Updated: 2025/06/17 17:41:48 by tomasklaus       ###   ########.fr       */
+/*   Updated: 2025/06/22 11:48:07 by dmalasek         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,8 @@
 Create an infinite loop that displays a prompt and accepts input via readline()
 Read the line and store it in a buffer
 Divide the characters separated by spaces (and other delimiters) into multiple strings
-Tokenize the individual words - classify into categories like WORDS and PIPES (thats Lex)?
+Tokenize the individual words
+	- classify into categories like WORDS and PIPES (thats Lex)?
 Go through those tokens and make a command table according to a grammar (thats Yacc)?
 Once the table is completed, execute the commands
 
@@ -39,10 +40,10 @@ either a built in function that we can program (named in the subject)
 or we have to fork and use execve
 	◦ for stuff like ls etc
  */
-void exec(char **command)
+void	exec(char **command)
 {
-	pid_t child_pid;
-	int stat_loc;
+	pid_t	child_pid;
+	int		stat_loc;
 
 	child_pid = fork();
 	if (child_pid == 0)
@@ -55,24 +56,21 @@ void exec(char **command)
 	}
 }
 
-int main(void)
+int	main(void)
 {
-	char *input;
-	char **command;
+	char	*input;
+	char	**command;
 
 	while (1)
 	{
 		// read input
 		input = readline("prompt> ");
 		if (!input)
-			break;
-
+			break ;
 		// parse, tokenize
 		command = ft_split(input, ' ');
-
 		// execute
 		exec(command);
-
 		free(input);
 		free(command); // need double pointer free
 	}

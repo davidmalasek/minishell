@@ -3,7 +3,7 @@ CC = cc
 CFLAGS = -Wall -Werror -Wextra
 
 # Source files
-SRC = src/main.c
+SRC = src/main.c src/parse.c
 
 # Output
 NAME = minishell
