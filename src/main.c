@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dmalasek <dmalasek@student.42.fr>          +#+  +:+       +#+        */
+/*   By: tomasklaus <tomasklaus@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 15:30:36 by dmalasek          #+#    #+#             */
-/*   Updated: 2025/06/22 11:48:07 by dmalasek         ###   ########.fr       */
+/*   Updated: 2025/06/22 13:11:30 by tomasklaus       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,39 +40,43 @@ either a built in function that we can program (named in the subject)
 or we have to fork and use execve
 	◦ for stuff like ls etc
  */
-void	exec(char **command)
-{
-	pid_t	child_pid;
-	int		stat_loc;
 
-	child_pid = fork();
-	if (child_pid == 0)
+
+void initialize_shell(char **envp)
+{
+	setup_signal_handlers(); // Ctrl-C, Ctrl-\, Ctrl-D
+	load_environment();		 // Copy env vars if needed
+	init_history();			 // Optional: readline history
+}
+
+int main_loop()
+{
+	while (1)
 	{
-		execvp(command[0], command);
-	}
-	else
-	{
-		waitpid(child_pid, &stat_loc, WUNTRACED);
+		//this needs to be replaced by the proper structures
+		char *input;
+		char **command_table;
+
+		input = readline("prompt> ");
+
+		add_to_history(input);
+
+		tokens = lexer(input); // Tokenize input into symbols: WORD, PIPE, REDIRECT, etc.
+
+		command_table = parser(tokens); // Parse tokens into structured commands
+		
+		exec(command_table); // Execute commands (pipeline, built-ins, execve, etc.)
+
+		cleanup(tokens, command_table);
 	}
 }
 
-int	main(void)
+int main(int argc, char **argv, char **envp)
 {
-	char	*input;
-	char	**command;
+	(void)argc;
+	(void)argv;
+	
 
-	while (1)
-	{
-		// read input
-		input = readline("prompt> ");
-		if (!input)
-			break ;
-		// parse, tokenize
-		command = ft_split(input, ' ');
-		// execute
-		exec(command);
-		free(input);
-		free(command); // need double pointer free
-	}
-	return (EXIT_SUCCESS);
+	initialize_shell(envp);
+	main_loop();
 }
