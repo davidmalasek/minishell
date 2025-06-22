@@ -6,7 +6,7 @@
 /*   By: dmalasek <dmalasek@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 15:31:41 by dmalasek          #+#    #+#             */
-/*   Updated: 2025/06/22 12:36:12 by dmalasek         ###   ########.fr       */
+/*   Updated: 2025/06/22 13:29:51 by dmalasek         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ typedef struct s_token
 {
 	char *value; // The actual text (e.g. "ls", "|", "file.txt")
 	int type;    // Type of token: WORD, PIPE, REDIR_IN, REDIR_OUT, etc.
-}	t_token;
+}		t_token;
 
 typedef struct s_command
 {
@@ -43,6 +43,8 @@ typedef struct s_command
 	char *outfile;    // File for output redirection (if any)
 	int append;       // 1 if >> was used, 0 if > was used
 	int pipe_to_next; // 1 if this command pipes to next, 0 otherwise
-}	t_command;
+}		t_command;
+
+size_t	get_array_length(char **array);
 
 #endif

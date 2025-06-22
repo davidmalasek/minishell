@@ -6,7 +6,7 @@
 /*   By: dmalasek <dmalasek@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/22 11:57:02 by dmalasek          #+#    #+#             */
-/*   Updated: 2025/06/22 12:52:39 by dmalasek         ###   ########.fr       */
+/*   Updated: 2025/06/22 14:56:41 by dmalasek         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,28 +32,39 @@ t_token	get_token(char *chunk)
 	return (token);
 }
 
-t_token	tokenize(char *input)
+t_token	*tokenize(char *input)
 {
 	char	**input_split;
-	int		i;
-	int		e;
+	t_token	*tokens;
+	size_t	count;
+	size_t	i;
 
 	input_split = ft_split(input, ' ');
-	i = 0;
-	while (input_split[i] != '\0')
+	if (!input_split)
+		return (NULL);
+	count = get_array_length(input_split);
+	tokens = malloc(sizeof(t_token) * (count + 1));
+	if (!tokens)
+		return (NULL);
+	while (i < count)
 	{
-		e = 0;
-		while (input_split[i][e] != '\0')
-		{
-		}
+		tokens[i] = get_token(input_split[i]);
+		free(input_split[i]);
+		i++;
 	}
+	tokens[i].value = NULL;
+	tokens[i].type = -1;
+	free(input_split);
+	return (tokens);
 }
 
-t_command	parse(char *input)
+t_command	*parse(char *input)
 {
-	t_token	tokenized_input;
+	t_token	*tokens;
 
-	tokenized_input = tokenize(input);
+	tokens = tokenize(input);
+	if (!tokens)
+		return (NULL);
 }
 
 /*
