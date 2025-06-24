@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dmalasek <dmalasek@student.42.fr>          +#+  +:+       +#+        */
+/*   By: davidmalasek <davidmalasek@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 15:31:41 by dmalasek          #+#    #+#             */
-/*   Updated: 2025/06/22 13:29:51 by dmalasek         ###   ########.fr       */
+/*   Updated: 2025/06/24 17:44:08 by davidmalase      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,13 @@ typedef struct s_command
 	int pipe_to_next; // 1 if this command pipes to next, 0 otherwise
 }		t_command;
 
+// src/parse/utils.c
 size_t	get_array_length(char **array);
+size_t	get_token_count(t_token *tokens);
+size_t	get_command_count(t_token *tokens);
+
+// src/parse/tokenize.c
+t_token	get_token(char *component);
+t_token	*tokenize(char *input);
 
 #endif
