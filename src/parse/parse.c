@@ -6,150 +6,137 @@
 /*   By: davidmalasek <davidmalasek@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/22 11:57:02 by dmalasek          #+#    #+#             */
-/*   Updated: 2025/06/24 17:46:26 by davidmalase      ###   ########.fr       */
+/*   Updated: 2025/07/01 17:26:06 by davidmalase      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../include/minishell.h"
+#include "../../include/minishell.h"
 
-t_command	*parse(char *input)
+static void	init_command(t_command *command)
 {
-	t_token		*tkns;
-	t_command	*cmds;
-	size_t		cmd_index;
-	size_t		tkn_index;
-	size_t		arg_index;
+	command->infile = NULL;
+	command->outfile = NULL;
+	command->append = 0;
+	command->pipe_to_next = 0;
+	command->heredoc_delimiter = NULL;
+}
 
-	tkns = tokenize(input);
-	if (!tkns)
-		return (NULL);
-	cmds = malloc(sizeof(t_command) * (get_command_count(tkns) + 1));
-	if (!cmds)
+size_t	count_args(t_token *tokens, size_t index)
+{
+	size_t	count;
+
+	count = 0;
+	while (tokens[index].type != PIPE && tokens[index].type != -1)
 	{
-		free(tkns);
-		return (NULL);
+		if (tokens[index].type == WORD)
+			count++;
+		index++;
 	}
+	return (count);
+}
+
+/**
+ * Fills commands with data and stores them in array of commands.
+ */
+static void	fill_command_fields(t_command *commands, t_token *tokens,
+		size_t *tkn_index)
+{
+	size_t	arg_index;
+
+	arg_index = 0;
+	while (tokens[*tkn_index].type != PIPE && tokens[*tkn_index].type != -1)
+	{
+		if (tokens[*tkn_index].type == WORD)
+			commands->args[arg_index++] = ft_strdup(tokens[*tkn_index].value);
+		else if (tokens[*tkn_index].type == REDIR_OUT)
+		{
+			*(tkn_index)++;
+			if (tokens[*tkn_index].type == WORD)
+				commands->outfile = ft_strdup(tokens[*tkn_index].value);
+		}
+		else if (tokens[*tkn_index].type == APPEND_OUT)
+		{
+			*(tkn_index)++;
+			if (tokens[*tkn_index].type == WORD)
+			{
+				commands->outfile = ft_strdup(tokens[*tkn_index].value);
+				commands->append = 1;
+			}
+		}
+		else if (tokens[*tkn_index].type == REDIR_IN)
+		{
+			*(tkn_index)++;
+			if (tokens[*tkn_index].type == WORD)
+				commands->infile = ft_strdup(tokens[*tkn_index].value);
+		}
+		else if (tokens[*tkn_index].type == HEREDOC)
+		{
+			*(tkn_index)++;
+			if (tokens[*tkn_index].type == WORD)
+				commands->heredoc_delimiter = ft_strdup(tokens[*tkn_index].value);
+		}
+		*(tkn_index)++;
+	}
+}
+
+/**
+ * Frees already allocated space for args when allocation fails.
+ */
+static void	free_commands(t_command *commands, size_t count)
+{
+	size_t	i;
+
+	i = 0;
+	while (i < count)
+	{
+		free(commands[i].args);
+		free(commands[i].infile);
+		free(commands[i].outfile);
+		free(commands[i].heredoc_delimiter);
+		i++;
+	}
+	free(commands);
+}
+
+/**
+ * @return Array of commands filled with data
+ */
+t_command	*parse(char *input) // norminette
+{
+	t_token *tokens;
+	t_command *commands;
+	size_t cmd_index;
+	size_t tkn_index;
+
+	tokens = tokenize(input);
+	if (!tokens)
+		return (NULL);
+	commands = malloc(sizeof(t_command) * get_command_count(tokens));
+	if (!commands)
+		return (free(tokens), NULL);
 	cmd_index = 0;
 	tkn_index = 0;
-	arg_index = 0;
-	while (cmd_index < get_command_count(tkns))
+	while (cmd_index < get_command_count(tokens))
 	{
-		arg_index = 0;
-		cmds[cmd_index].args = malloc(sizeof(char *) * (get_token_count(tkns)
-					+ 1));
-		cmds[cmd_index].infile = NULL;
-		cmds[cmd_index].outfile = NULL;
-		cmds[cmd_index].append = 0;
-		cmds[cmd_index].pipe_to_next = 0;
-		while (tkns[tkn_index].type != PIPE && tkns[tkn_index].type != -1)
+		init_command(&commands[cmd_index]);
+		commands[cmd_index].args = malloc(sizeof(char *) * (count_args(tokens,
+						tkn_index) + 1));
+		if (!commands[cmd_index].args)
+			return (free_commands(commands, cmd_index), free(tokens), NULL);
+		fill_command_fields(&commands[cmd_index], tokens, &tkn_index);
+		if (tokens[tkn_index].type == PIPE)
 		{
-			if (tkns[tkn_index].type == WORD)
-				cmds[cmd_index].args[arg_index++] = ft_strdup(tkns[tkn_index].value);
-			tkn_index++;
-		}
-		cmds[cmd_index].pipe_to_next = NULL;
-		if (tkns[tkn_index].type = PIPE)
-		{
-			cmds[cmd_index].pipe_to_next = 1;
+			commands[cmd_index].pipe_to_next = 1;
 			tkn_index++;
 		}
 		cmd_index++;
 	}
-	free(tkns);
-	return (cmds);
+	return (free(tokens), commands);
 }
 
 /*
-DAVID TODO:
-- parsovani
-- history
-*/
-
-/*
-// ...existing code...
-t_command	*parse(char *input)
-{
-	t_token		*tkns;
-	size_t		cmd_count;
-	size_t		i;
-	t_command	*cmds;
-
-	i = 0, j;
-	cmd_count = 1;
-	i = 0, j = 0, arg_idx;
-	tkns = tokenize(input);
-	if (!tkns)
-		return (NULL);
-	// 1. Count cmds (by PIPE)
-	while (tkns[i].type != -1)
-	{
-		if (tkns[i].type == PIPE)
-			cmd_count++;
-		i++;
-	}
-	// 2. Allocate array of t_command
-	cmds = malloc(sizeof(t_command) * (cmd_count + 1));
-	if (!cmds)
-		return (NULL);
-	// 3. Fill cmds
-	i = 0;
-	j = 0;
-	while (j < cmd_count)
-	{
-		// Initialize command
-		cmds[j].args = malloc(sizeof(char *)
-				* (get_array_length((char **)tkns) + 1));
-		arg_idx = 0;
-		cmds[j].infile = NULL;
-		cmds[j].outfile = NULL;
-		cmds[j].append = 0;
-		cmds[j].pipe_to_next = 0;
-		while (tkns[i].type != PIPE && tkns[i].type != -1)
-		{
-			if (tkns[i].type == WORD)
-			{
-				cmds[j].args[arg_idx++] = ft_strdup(tkns[i].value);
-			}
-			else if (tkns[i].type == REDIR_IN)
-			{
-				i++;
-				if (tkns[i].type == WORD)
-					cmds[j].infile = ft_strdup(tkns[i].value);
-			}
-			else if (tkns[i].type == REDIR_OUT)
-			{
-				i++;
-				if (tkns[i].type == WORD)
-				{
-					cmds[j].outfile = ft_strdup(tkns[i].value);
-					cmds[j].append = 0;
-				}
-			}
-			else if (tkns[i].type == APPEND_OUT)
-			{
-				i++;
-				if (tkns[i].type == WORD)
-				{
-					cmds[j].outfile = ft_strdup(tkns[i].value);
-					cmds[j].append = 1;
-				}
-			}
-			// HEREDOC handling can be added here
-			i++;
-		}
-		cmds[j].args[arg_idx] = NULL;
-		if (tkns[i].type == PIPE)
-		{
-			cmds[j].pipe_to_next = 1;
-			i++;
-		}
-		j++;
-	}
-	// Mark end of array if needed (optional)
-	// cmds[j].args = NULL;
-	// Free tkns if needed
-	free(tkns);
-	return (cmds);
-}
-// ...existing code...
+TODO:
+- co když input není validní?
+- alokovat args jen podle počtu WORD tokenů
+- implementovat quoting a escaping
 */

@@ -6,12 +6,15 @@
 /*   By: davidmalasek <davidmalasek@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/24 13:43:43 by davidmalase       #+#    #+#             */
-/*   Updated: 2025/06/24 17:34:56 by davidmalase      ###   ########.fr       */
+/*   Updated: 2025/07/01 17:29:57 by davidmalase      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
+/**
+ * @return Token (PIPE, REDIR_IN, HEREDOC, REDIR_OUT, APPEND_OUT, WORD)
+ */
 t_token	get_token(char *component)
 {
 	t_token	token;
@@ -31,7 +34,9 @@ t_token	get_token(char *component)
 	token.value = ft_strdup(component);
 	return (token);
 }
-
+/**
+ * @return Array of tokens
+ */
 t_token	*tokenize(char *input)
 {
 	char	**input_split;
