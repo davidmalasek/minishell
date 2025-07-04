@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dmalasek <dmalasek@student.42.fr>          +#+  +:+       +#+        */
+/*   By: tomasklaus <tomasklaus@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 15:31:41 by dmalasek          #+#    #+#             */
-/*   Updated: 2025/06/22 12:36:12 by dmalasek         ###   ########.fr       */
+/*   Updated: 2025/06/22 13:25:15 by tomasklaus       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,5 +44,8 @@ typedef struct s_command
 	int append;       // 1 if >> was used, 0 if > was used
 	int pipe_to_next; // 1 if this command pipes to next, 0 otherwise
 }	t_command;
+
+/* exec.c */
+void exec(t_command *command);
 
 #endif
