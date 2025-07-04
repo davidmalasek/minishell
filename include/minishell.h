@@ -5,10 +5,11 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: tomasklaus <tomasklaus@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/05/08 15:31:41 by dmalasek          #+#    #+#             */
-/*   Updated: 2025/06/22 13:25:15 by tomasklaus       ###   ########.fr       */
+/*   Created: Invalid date        by                   #+#    #+#             */
+/*   Updated: 2025/07/04 12:38:22 by tomasklaus       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
 
 #ifndef MINISHELL_H
 # define MINISHELL_H
@@ -32,20 +33,27 @@
 // PARSING
 typedef struct s_token
 {
-	char *value; // The actual text (e.g. "ls", "|", "file.txt")
-	int type;    // Type of token: WORD, PIPE, REDIR_IN, REDIR_OUT, etc.
-}	t_token;
+	char	*value;
+	int		type;
+}			t_token;
 
 typedef struct s_command
 {
-	char **args;      // List of arguments for execve (e.g. {"ls", "-l", NULL})
-	char *infile;     // File for input redirection (if any)
-	char *outfile;    // File for output redirection (if any)
-	int append;       // 1 if >> was used, 0 if > was used
-	int pipe_to_next; // 1 if this command pipes to next, 0 otherwise
-}	t_command;
+	char	**args;
+	char	*infile;
+	char	*outfile;
+	int		append;
+	int		pipe_to_next;
+	char	*heredoc_delimiter;
+}			t_command;
 
-/* exec.c */
-void exec(t_command *command);
+// src/parse/utils.c
+size_t		get_array_length(char **array);
+size_t		get_token_count(t_token *tokens);
+size_t		get_command_count(t_token *tokens);
+
+// src/parse/tokenize.c
+t_token		get_token(char *component);
+t_token		*tokenize(char *input);
 
 #endif
