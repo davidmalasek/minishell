@@ -6,7 +6,7 @@
 /*   By: tomasklaus <tomasklaus@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 15:30:36 by dmalasek          #+#    #+#             */
-/*   Updated: 2025/06/22 13:11:30 by tomasklaus       ###   ########.fr       */
+/*   Updated: 2025/07/06 10:41:44 by tomasklaus       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,33 +41,35 @@ or we have to fork and use execve
 	◦ for stuff like ls etc
  */
 
-
-void initialize_shell(char **envp)
+t_env *initialize_shell(char **envp)
 {
-	setup_signal_handlers(); // Ctrl-C, Ctrl-\, Ctrl-D
-	load_environment();		 // Copy env vars if needed
-	init_history();			 // Optional: readline history
+	t_env *env;
+
+	env = load_env(envp); // Copy env vars if needed
+
+	//setup_signal_handlers(); // Ctrl-C, Ctrl-\, Ctrl-D
+	//init_history();			 // Optional: readline history
+
+	return env;
 }
 
-int main_loop()
+int main_loop(t_env *env)
 {
 	while (1)
 	{
-		//this needs to be replaced by the proper structures
+		// this needs to be replaced by the proper structures
 		char *input;
-		char **command_table;
+		t_command *command_list;
 
 		input = readline("prompt> ");
 
-		add_to_history(input);
+		//add_to_history(input);
 
-		tokens = lexer(input); // Tokenize input into symbols: WORD, PIPE, REDIRECT, etc.
+		command_list = parse(input); // Parse input into structured commands
 
-		command_table = parser(tokens); // Parse tokens into structured commands
-		
-		exec(command_table); // Execute commands (pipeline, built-ins, execve, etc.)
+		exec(command_list, env); // Execute commands (pipeline, built-ins, execve, etc.)
 
-		cleanup(tokens, command_table);
+		//cleanup(command_list);
 	}
 }
 
@@ -75,8 +77,9 @@ int main(int argc, char **argv, char **envp)
 {
 	(void)argc;
 	(void)argv;
-	
 
-	initialize_shell(envp);
-	main_loop();
+	t_env *env;
+
+	env = initialize_shell(envp);
+	main_loop(env);
 }

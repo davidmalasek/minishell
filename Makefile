@@ -3,7 +3,21 @@ CC = cc
 CFLAGS = -Wall -Werror -Wextra
 
 # Source files
-SRC = src/main.c src/parse/parse.c src/parse/utils.c src/parse/tokenize.c
+SRC = src/main.c \
+	src/parse/parse.c \
+	src/parse/utils.c \
+	src/parse/tokenize.c \
+	src/builtins/cd.c \
+	src/builtins/echo.c \
+	src/builtins/env.c \
+	src/builtins/exit.c \
+	src/builtins/export.c \
+	src/builtins/pwd.c \
+	src/builtins/unset.c \
+	src/builtins/utils.c \
+	src/env/load_env.c \
+	src/env/utils.c \
+	src/exec/exec.c
 
 # Output
 NAME = minishell
