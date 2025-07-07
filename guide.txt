@@ -1,0 +1,144 @@
+✅ SHELL SYMBOLS — EXPLAINED
+
+⸻
+
+🔹 ' (Single Quotes)
+
+Purpose: Prevent all expansions and substitutions inside.
+
+echo 'Hello $USER'
+# Output: Hello $USER  ← No variable expansion
+
+Behavior:
+	•	Everything inside '...' is taken literally.
+	•	You cannot escape characters inside single quotes.
+
+Your shell must:
+	•	Treat the content inside as one literal token.
+	•	Do not expand variables or interpret special characters inside.
+
+⸻
+
+🔹 " (Double Quotes)
+
+Purpose: Allow some expansion (like $VAR), but prevent word splitting and globbing.
+
+echo "Hello $USER"
+# Output: Hello tomas   ← Variable is expanded
+
+echo "File: *"
+# Output: File: *       ← No globbing (* is not expanded)
+
+Behavior:
+	•	Variable expansion ($USER) and backslash escaping still work.
+	•	But it’s treated as one token (no splitting by spaces inside).
+
+Your shell must:
+	•	Recognize variable names inside.
+	•	Replace them with their values during parsing/lexing.
+	•	Keep the quoted content as a single token.
+
+⸻
+
+🔹 < and << (Input Redirection)
+
+Symbol	Meaning
+<	Redirects input from a file
+<<	“Here document” — lets you input multiline strings directly in the shell
+
+Example: <
+
+cat < file.txt
+# Equivalent to: open file.txt and feed it to cat via stdin
+
+Example: << (Here-document)
+
+cat << END
+Hello
+World
+END
+
+This will feed "Hello\nWorld\n" as input to cat.
+
+Your shell must:
+	•	Recognize < and open the file, using dup2() to replace stdin.
+	•	Recognize << and read input lines until the delimiter is reached.
+
+⸻
+
+🔹 > and >> (Output Redirection)
+
+Symbol	Meaning
+>	Redirect output to a file (overwrite)
+>>	Append output to a file
+
+echo hello > file.txt   # file.txt contains "hello"
+echo again >> file.txt  # file.txt now has "hello\nagain"
+
+Your shell must:
+	•	Open the file in write or append mode.
+	•	Use dup2() to redirect stdout to the file before running the command.
+
+⸻
+
+🔹 | (Pipe)
+
+Purpose: Connect the output of one command to the input of another.
+
+ls | grep "test"
+
+	•	ls writes to a pipe instead of the terminal.
+	•	grep reads from that pipe instead of from stdin.
+
+Your shell must:
+	•	Create a pipe with pipe()
+	•	Fork twice:
+	•	The first child writes to the pipe.
+	•	The second child reads from the pipe.
+	•	Use dup2() to redirect the stdout of the first and stdin of the second.
+
+⸻
+
+🔹 $ (Variable Expansion)
+
+Purpose: Substitute variables with their values.
+
+echo $USER
+# Output: tomas
+
+Your shell must:
+	•	Detect $ in the input string.
+	•	Find the matching variable name (e.g., USER).
+	•	Look it up in the environment.
+	•	Replace $USER with its value before executing the command.
+
+⸻
+
+🔹 $? (Last Command Exit Status)
+
+Purpose: Gives the return code of the most recently executed command.
+
+ls
+echo $?
+# Output: 0  ← if ls succeeded
+
+ls nonexisting
+echo $?
+# Output: 1 or other non-zero value
+
+Your shell must:
+	•	Store the return value of the last command (waitpid() gives it).
+	•	Replace $? with that numeric value during variable expansion.
+
+⸻
+
+🧠 TL;DR – What You Must Implement
+
+Symbol	What To Do
+'...'	Treat contents as literal text (no expansion)
+"..."	Allow variable expansion, but no splitting/globbing
+<, <<	Redirect stdin (file or heredoc)
+>, >>	Redirect stdout (overwrite or append)
+`	`
+$VAR	Replace with environment variable value
+$?	Replace with last command’s exit status

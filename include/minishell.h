@@ -6,7 +6,7 @@
 /*   By: tomasklaus <tomasklaus@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2025/07/06 10:45:24 by tomasklaus       ###   ########.fr       */
+/*   Updated: 2025/07/07 09:58:28 by tomasklaus       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@
 #include <sys/wait.h>
 #include <unistd.h>
 #include <limits.h>
+#include <fcntl.h>
 
 #define WORD 0
 #define PIPE 1
@@ -73,11 +74,15 @@ t_token get_token(char *component);
 t_token *tokenize(char *input);
 
 // src/parse/parse.c
-t_command	*parse(char *input);
+t_command *parse(char *input);
 
 /* EXECUTION */
 // src/exec/
 int exec(t_command *command_list, t_env *env);
+char *resolve_path(char *command);
+int redir_setup(t_command *command);
+int is_parent_builtin(char *str);
+int pipe_setup(t_command *command,int pipe_fd[2], int prev_pipe[2]);
 
 // src/builtins/
 int ft_cd(char **args, t_env *env);

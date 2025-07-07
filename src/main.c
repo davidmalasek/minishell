@@ -6,7 +6,7 @@
 /*   By: tomasklaus <tomasklaus@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 15:30:36 by dmalasek          #+#    #+#             */
-/*   Updated: 2025/07/06 10:41:44 by tomasklaus       ###   ########.fr       */
+/*   Updated: 2025/07/07 00:04:33 by tomasklaus       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,8 +47,8 @@ t_env *initialize_shell(char **envp)
 
 	env = load_env(envp); // Copy env vars if needed
 
-	//setup_signal_handlers(); // Ctrl-C, Ctrl-\, Ctrl-D
-	//init_history();			 // Optional: readline history
+	// setup_signal_handlers(); // Ctrl-C, Ctrl-\, Ctrl-D
+	// init_history();			 // Optional: readline history
 
 	return env;
 }
@@ -61,15 +61,17 @@ int main_loop(t_env *env)
 		char *input;
 		t_command *command_list;
 
-		input = readline("prompt> ");
+		input = readline("minishell ➜ ");
+		if (input && *input)
+			add_history(input);
 
-		//add_to_history(input);
+		// add_to_history(input);
 
 		command_list = parse(input); // Parse input into structured commands
 
 		exec(command_list, env); // Execute commands (pipeline, built-ins, execve, etc.)
 
-		//cleanup(command_list);
+		// cleanup(command_list);
 	}
 }
 

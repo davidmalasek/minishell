@@ -17,7 +17,9 @@ SRC = src/main.c \
 	src/builtins/utils.c \
 	src/env/load_env.c \
 	src/env/utils.c \
-	src/exec/exec.c
+	src/exec/exec.c \
+	src/exec/utils.c \
+	src/exec/redir.c \
 
 # Output
 NAME = minishell

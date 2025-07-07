@@ -1,27 +1,29 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   exit.c                                             :+:      :+:    :+:   */
+/*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tomasklaus <tomasklaus@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/04 20:57:25 by tomasklaus        #+#    #+#             */
-/*   Updated: 2025/07/07 00:02:56 by tomasklaus       ###   ########.fr       */
+/*   Created: 2025/07/06 12:07:52 by tomasklaus        #+#    #+#             */
+/*   Updated: 2025/07/06 12:19:31 by tomasklaus       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
-//need to implement the exit status
-
-int ft_exit(char **args, int status)
+char *resolve_path(char *command)
 {
-    if (args && args[1])
+    char *path = getenv("PATH");
+    char **paths = ft_split(path, ':');
+    int i = 0;
+    while (paths[i])
     {
-        ft_putstr_fd("exit: options not supported\n", 2);
-        return (ERROR);
+        char *full_path = ft_strjoin(paths[i], "/");
+        full_path = ft_strjoin(full_path, command);
+        if (access(full_path, X_OK) == 0)
+            return full_path;
+        i++;
     }
-    ft_putstr_fd("Quitting session\n", 1);
-    exit(status);
-    return SUCCESS;
+    return NULL;
 }
