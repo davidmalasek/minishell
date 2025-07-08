@@ -6,7 +6,7 @@
 /*   By: tomasklaus <tomasklaus@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/04 20:57:08 by tomasklaus        #+#    #+#             */
-/*   Updated: 2025/07/06 11:35:57 by tomasklaus       ###   ########.fr       */
+/*   Updated: 2025/07/07 23:47:53 by tomasklaus       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,24 +41,14 @@ int del_arg(char *new_key, t_env *env)
 
 int ft_unset(char **args, t_env *env)
 {
-    if (validate_args(args, "unset") != SUCCESS) // can actually accept multiple args so change this
+    if (validate_args(args, "unset", -1, 2) != SUCCESS)
         return ERROR;
 
     int i = 1;
     while (args[i])
     {
-        /* char *equal = ft_strchr(args[i], '='); // Find the position of '='
-        if (!equal)
-        {
-            ft_putstr_fd("unset: invalid argument\n", 2);
-            return (ERROR);
-        }
-
-        char *key = ft_substr(args[i], 0, equal - args[i]); // Extract key part before '=' */
-
         int status;
         status = del_arg(args[i], env);
-        //free(key);
         if (status == ERROR)
             return ERROR;
         i++;

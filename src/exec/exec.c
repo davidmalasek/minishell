@@ -6,7 +6,7 @@
 /*   By: tomasklaus <tomasklaus@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/22 12:27:04 by tomasklaus        #+#    #+#             */
-/*   Updated: 2025/07/07 10:17:55 by tomasklaus       ###   ########.fr       */
+/*   Updated: 2025/07/08 00:04:30 by tomasklaus       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,7 @@ int is_parent_builtin(char *str)
     return (0);
 }
 
-int exec_builtin(t_command command, t_env *env)
+int exec_builtin(t_command command, t_env *env, int status)
 {
     if (!command.args || !command.args[0])
         return (ERROR);
@@ -78,22 +78,42 @@ int exec_builtin(t_command command, t_env *env)
     else if (ft_strcmp(command.args[0], "env") == 0)
         return ft_env(command.args, env);
     else if (ft_strcmp(command.args[0], "exit") == 0)
-        return ft_exit(command.args, 0); // pass status
+        return ft_exit(command.args, status);
+    return ERROR;
+}
+// this probably wont work once quotes handling is implemented
+void expand_exit_status(char **args, int *status)
+{
+    int i = 0;
+    char *status_str;
 
-    return (SUCCESS);
+    if (!args)
+        return;
+    status_str = ft_itoa(*status);
+    while (args[i])
+    {
+        if (ft_strcmp(args[i], "$?") == 0)
+        {
+            free(args[i]);
+            args[i] = ft_strdup(status_str);
+        }
+        i++;
+    }
+    free(status_str);
 }
 
-int exec(t_command *command_list, t_env *env)
+int exec(t_command *command_list, t_env *env, int *status)
 {
     pid_t pid;
-    int status;
-    int prev_pipe[2];
+
+    int prev_pipe[2] = {-1, -1};
 
     while (command_list->args != NULL)
     {
-        if (is_parent_builtin(command_list->args[0]) && !command_list->pipe_to_next)
+        if (is_parent_builtin(command_list->args[0]) /* && no_redirs(command_list) */)
         {
-            exec_builtin(*command_list, env);
+            *status = exec_builtin(*command_list, env, *status);
+
             command_list++;
             continue;
         }
@@ -103,29 +123,31 @@ int exec(t_command *command_list, t_env *env)
         pid = fork();
         if (pid == 0)
         {
+            signal(SIGINT, SIG_DFL);
             pipe_setup(command_list, pipe_fd, prev_pipe);
             redir_setup(command_list);
+            expand_exit_status(command_list->args, status);
             if (is_builtin(command_list->args[0]))
-                status = exec_builtin(*command_list, env);
+                *status = exec_builtin(*command_list, env, *status);
             else if (execve(resolve_path(command_list->args[0]), command_list->args, env_list_to_array(env)) == -1)
             {
-                // perror("minishell");
                 printf("minishell: command not found: %s\n", command_list->args[0]);
                 exit(EXIT_FAILURE);
             }
-            exit(EXIT_SUCCESS);
+            exit(*status);
         }
         else
         {
-            if (prev_pipe[0])
+            if (prev_pipe[0] > 0)
                 close(prev_pipe[0]);
             if (command_list->pipe_to_next)
             {
                 close(pipe_fd[1]);         // write end
                 prev_pipe[0] = pipe_fd[0]; // save read end
             }
-            waitpid(pid, &status, WUNTRACED);
+            waitpid(pid, status, 0);
         }
+
         command_list++;
     }
     return SUCCESS;

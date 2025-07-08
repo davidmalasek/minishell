@@ -1,37 +1,36 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   env.c                                              :+:      :+:    :+:   */
+/*   sighandling.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tomasklaus <tomasklaus@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/04 20:57:27 by tomasklaus        #+#    #+#             */
-/*   Updated: 2025/07/07 23:44:52 by tomasklaus       ###   ########.fr       */
+/*   Created: 2025/07/07 21:25:18 by tomasklaus        #+#    #+#             */
+/*   Updated: 2025/07/07 23:48:07 by tomasklaus       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
-void print_env(char **envp)
+void sigint_handler(int signo)
 {
-    int i;
+    (void)signo;
+    write(STDOUT_FILENO, "\n", 1);
 
-    i = 0;
-    while (envp[i])
-    {
-        ft_putstr_fd(envp[i], 1);
-        ft_putchar_fd('\n', 1);
-        i++;
+    // Workaround to clear the current input line bc rl_replace_line is unavailable:
+    if (rl_line_buffer) {
+        rl_line_buffer[0] = '\0';
+        rl_point = 0;
+        rl_end = 0;
     }
+    rl_on_new_line();
+    rl_redisplay();
 }
 
-int ft_env(char **args, t_env *env)
+int setup_signal_handlers()
 {
-    if (validate_args(args, "env", 1, 1) != SUCCESS)
-        return ERROR;
-    char **envp;
-
-    envp = env_list_to_array(env);
-    print_env(envp);
+    signal(SIGINT, sigint_handler);
+    signal(SIGQUIT, SIG_IGN);
+    
     return SUCCESS;
 }

@@ -6,7 +6,7 @@
 /*   By: tomasklaus <tomasklaus@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2025/07/07 09:58:28 by tomasklaus       ###   ########.fr       */
+/*   Updated: 2025/07/07 23:37:57 by tomasklaus       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,7 @@ typedef struct s_env
 t_env *load_env(char **envp);
 char **env_list_to_array(t_env *env);
 int add_env_node(t_env **head, char *key, char *value, int exported);
+int setup_signal_handlers();
 
 /* PARSING */
 typedef struct s_token
@@ -78,11 +79,12 @@ t_command *parse(char *input);
 
 /* EXECUTION */
 // src/exec/
-int exec(t_command *command_list, t_env *env);
+int exec(t_command *command_list, t_env *env, int *status);
 char *resolve_path(char *command);
 int redir_setup(t_command *command);
 int is_parent_builtin(char *str);
-int pipe_setup(t_command *command,int pipe_fd[2], int prev_pipe[2]);
+int pipe_setup(t_command *command, int pipe_fd[2], int prev_pipe[2]);
+int no_redirs(t_command *command);
 
 // src/builtins/
 int ft_cd(char **args, t_env *env);
@@ -94,6 +96,6 @@ int ft_pwd(void);
 int ft_unset(char **args, t_env *env);
 
 int arg_count(char **args);
-int validate_args(char **args, char *command_name);
+int validate_args(char **args, char *command_name, int max_args, int min_args);
 
 #endif

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: davidmalasek <davidmalasek@student.42.f    +#+  +:+       +#+        */
+/*   By: tomasklaus <tomasklaus@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/22 11:57:02 by dmalasek          #+#    #+#             */
-/*   Updated: 2025/07/01 15:17:24 by davidmalase      ###   ########.fr       */
+/*   Updated: 2025/07/07 21:24:20 by tomasklaus       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,9 +15,9 @@
 /**
  * @return Number of tokens in an array of tokens (regardless of type)
  */
-size_t	get_token_count(t_token *tokens)
+size_t get_token_count(t_token *tokens)
 {
-	size_t	count;
+	size_t count;
 
 	count = 0;
 	while (tokens[count].type != -1)
@@ -31,10 +31,10 @@ size_t	get_token_count(t_token *tokens)
  * @return Number of commands in an array of tokens
  * Basically -> number of pipes + 1
  */
-size_t	get_command_count(t_token *tokens)
+size_t get_command_count(t_token *tokens)
 {
-	size_t	count;
-	size_t	i;
+	size_t count;
+	size_t i;
 
 	count = 0;
 	i = 0;
@@ -50,9 +50,9 @@ size_t	get_command_count(t_token *tokens)
 /**
  * @return Number of items in an array
  */
-size_t	get_array_length(char **array)
+size_t get_array_length(char **array)
 {
-	size_t	len;
+	size_t len;
 
 	len = 0;
 	while (array[len] != NULL)

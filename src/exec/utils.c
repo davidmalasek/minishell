@@ -6,7 +6,7 @@
 /*   By: tomasklaus <tomasklaus@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/06 12:07:52 by tomasklaus        #+#    #+#             */
-/*   Updated: 2025/07/06 12:19:31 by tomasklaus       ###   ########.fr       */
+/*   Updated: 2025/07/07 23:22:14 by tomasklaus       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,3 +27,22 @@ char *resolve_path(char *command)
     }
     return NULL;
 }
+
+
+int no_redirs(t_command *command)
+{
+    if (!command)
+        return EXIT_FAILURE;
+    if (command->infile != NULL)
+        return SUCCESS;
+    if (command->outfile != NULL)
+        return SUCCESS;
+    if (command->append)
+        return SUCCESS;
+    if (command->heredoc_delimiter != NULL)
+        return SUCCESS;
+    if (command->pipe_to_next)
+        return SUCCESS;
+    return EXIT_FAILURE;
+}
+

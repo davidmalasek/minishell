@@ -16,10 +16,12 @@ SRC = src/main.c \
 	src/builtins/unset.c \
 	src/builtins/utils.c \
 	src/env/load_env.c \
+	src/env/sighandling.c \
 	src/env/utils.c \
 	src/exec/exec.c \
 	src/exec/utils.c \
 	src/exec/redir.c \
+	
 
 # Output
 NAME = minishell
@@ -36,7 +38,7 @@ OBJ = $(SRC:src/%.c=$(OBJ_DIR)/%.o)
 all: $(NAME)
 
 $(NAME): $(OBJ) $(LIBFT_LIB)
-	$(CC) $(CFLAGS) -o $(NAME) $(OBJ) $(LIBFT_LIB) -lreadline
+	$(CC) $(CFLAGS) -o $(NAME) $(OBJ) $(LIBFT_LIB) -lreadline -L /opt/homebrew/opt/readline/lib -I /opt/homebrew/opt/readline/include
 
 # Only rebuild libft when the library has changed
 $(LIBFT_LIB):

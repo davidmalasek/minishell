@@ -6,7 +6,7 @@
 /*   By: tomasklaus <tomasklaus@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/04 20:57:23 by tomasklaus        #+#    #+#             */
-/*   Updated: 2025/07/06 11:28:19 by tomasklaus       ###   ########.fr       */
+/*   Updated: 2025/07/07 23:45:44 by tomasklaus       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,7 @@ int ft_export(char **args, t_env *env)
         char *equal = ft_strchr(args[i], '='); // Find the position of '='
         if (!equal)
         {
-            ft_putstr_fd("export: invalid argument/n", 2);
+            ft_putstr_fd("export: invalid argument\n", 2);
             return (ERROR);
         }
 

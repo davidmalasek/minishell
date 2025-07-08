@@ -6,40 +6,16 @@
 /*   By: tomasklaus <tomasklaus@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 15:30:36 by dmalasek          #+#    #+#             */
-/*   Updated: 2025/07/07 00:04:33 by tomasklaus       ###   ########.fr       */
+/*   Updated: 2025/07/08 20:48:28 by tomasklaus       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
 
-/*
-Create an infinite loop that displays a prompt and accepts input via readline()
-Read the line and store it in a buffer
-Divide the characters separated by spaces (and other delimiters) into multiple strings
-Tokenize the individual words
-	- classify into categories like WORDS and PIPES (thats Lex)?
-Go through those tokens and make a command table according to a grammar (thats Yacc)?
-Once the table is completed, execute the commands
-
-------------------also--------------------------------
-manage history
-global variable - signals?
-manage quotes (''""), environment variables (${}), $?, ctrl-C, ctrl-D and ctrl-\
- */
-
-/*
-either a built in function that we can program (named in the subject)
-	◦ echo with option -n
-	◦ cd with only a relative or absolute path
-	◦ pwd with no options
-	◦ export with no options
-	◦ unset with no options
-	◦ env with no options or arguments
-	◦ exit with no options
-
-or we have to fork and use execve
-	◦ for stuff like ls etc
- */
+/* 
+TODO
+cleanup
+*/
 
 t_env *initialize_shell(char **envp)
 {
@@ -47,14 +23,14 @@ t_env *initialize_shell(char **envp)
 
 	env = load_env(envp); // Copy env vars if needed
 
-	// setup_signal_handlers(); // Ctrl-C, Ctrl-\, Ctrl-D
-	// init_history();			 // Optional: readline history
+	setup_signal_handlers(); // Ctrl-C, Ctrl-\, Ctrl-D
 
 	return env;
 }
 
 int main_loop(t_env *env)
 {
+	int status = 0;
 	while (1)
 	{
 		// this needs to be replaced by the proper structures
@@ -62,16 +38,19 @@ int main_loop(t_env *env)
 		t_command *command_list;
 
 		input = readline("minishell ➜ ");
+		if (input == NULL)
+		{
+			write(STDOUT_FILENO, "exit\n", 5);
+			exit(EXIT_SUCCESS);
+		}
 		if (input && *input)
 			add_history(input);
 
-		// add_to_history(input);
-
 		command_list = parse(input); // Parse input into structured commands
 
-		exec(command_list, env); // Execute commands (pipeline, built-ins, execve, etc.)
+		exec(command_list, env, &status); // Execute commands (pipeline, built-ins, execve, etc.)
 
-		// cleanup(command_list);
+		//cleanup(command_list);
 	}
 }
 

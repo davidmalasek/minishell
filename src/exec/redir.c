@@ -6,7 +6,7 @@
 /*   By: tomasklaus <tomasklaus@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/06 17:22:53 by tomasklaus        #+#    #+#             */
-/*   Updated: 2025/07/07 10:15:23 by tomasklaus       ###   ########.fr       */
+/*   Updated: 2025/07/07 10:58:06 by tomasklaus       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 int pipe_setup(t_command *command, int pipe_fd[2], int prev_pipe[2])
 {
-    if (prev_pipe[0])
+    if (prev_pipe[0] > 0)
     {
         dup2(prev_pipe[0], STDIN_FILENO);
         close(prev_pipe[0]);
@@ -28,50 +28,71 @@ int pipe_setup(t_command *command, int pipe_fd[2], int prev_pipe[2])
     return SUCCESS;
 }
 
-int temp_file(char *delimiter)
+static int input_redir(const char *infile)
 {
-    (void)delimiter;
-    return 1;
+    int fd;
+
+    fd = open(infile, O_RDONLY);
+    if (fd == -1)
+    {
+        perror("minishell");
+        exit(EXIT_FAILURE);
+    }
+    dup2(fd, STDIN_FILENO);
+    close(fd);
+    return SUCCESS;
 }
 
-int heredoc_setup(t_command *command)
+static int output_redir(const char *outfile, int append)
 {
-    int heredoc_fd = 0;
-    heredoc_fd = temp_file(command->heredoc_delimiter);
-    dup2(heredoc_fd, STDIN_FILENO);
-    close(heredoc_fd);
-    return heredoc_fd;
+    int fd;
+
+    if (append)
+        fd = open(outfile, O_WRONLY | O_CREAT | O_APPEND, 0644);
+    else
+        fd = open(outfile, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+    if (fd == -1)
+    {
+        perror("minishell");
+        exit(EXIT_FAILURE);
+    }
+    dup2(fd, STDOUT_FILENO);
+    close(fd);
+    return SUCCESS;
+}
+
+static int heredoc_redir(char *delimiter)
+{
+    int pipe_fd[2];
+    pipe(pipe_fd);
+    printf("setting up heredoc");
+
+    while (1)
+    {
+        char *line = readline("> ");
+        if (!line || strcmp(line, delimiter) == 0)
+            break;
+        write(pipe_fd[1], line, strlen(line));
+        write(pipe_fd[1], "\n", 1);
+        free(line);
+    }
+    close(pipe_fd[1]);
+    return SUCCESS;
 }
 
 int redir_setup(t_command *command)
 {
-    int fd = 0;
     // --- INPUT REDIRECTION ---
     if (command->infile)
-    {
-        fd = open(command->infile, O_RDONLY);
-        if (fd == -1)
-        {
-            perror("minishell");
-            exit(EXIT_FAILURE);
-        }
-        dup2(fd, STDIN_FILENO);
-        close(fd);
-    }
+        input_redir(command->infile);
 
     // --- HEREDOC ---
     if (command->heredoc_delimiter)
-        heredoc_setup(command);
+        heredoc_redir(command->heredoc_delimiter);
 
     // --- OUTPUT REDIRECTION ---
     if (command->outfile)
-    {
-        if (command->append)
-            fd = open(command->outfile, O_WRONLY | O_CREAT | O_APPEND, 0644);
-        else
-            fd = open(command->outfile, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-        dup2(fd, STDOUT_FILENO);
-        close(fd);
-    }
+        output_redir(command->outfile, command->append);
+
     return SUCCESS;
 }
