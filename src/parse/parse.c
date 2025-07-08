@@ -6,7 +6,7 @@
 /*   By: davidmalasek <davidmalasek@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/22 11:57:02 by dmalasek          #+#    #+#             */
-/*   Updated: 2025/07/08 15:13:40 by davidmalase      ###   ########.fr       */
+/*   Updated: 2025/07/08 21:58:33 by davidmalase      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -142,7 +142,27 @@ t_command	*parse(char *input)
 
 /*
 TODO:
+- používat inline copilot!!!!
 - co když input není validní?
 - implementovat quoting a escaping
-- heredoc nefunguje
+- heredoc nefunguje (registruje jako outfile a append?) - mám screenshot uložený
+	- vyzkoušet co to vypisuje
+- environment variables (převzít od Tomáše)
+	- nahradit v tokenu $PWD tím co pod tím skutečně je
+	- dollar by neměl fungovat uprostřed quotes
+	- nějaká special funkce: char *key = getenv(“KEY”);
+- $?
+	- pokud byl command úspěšný vrátí to 0
+	- tomáš řeší funkci, kterou mi poskytne na toto
+- když jsou uvozovky, nastavit nějaký flag (posílat ho s command listem)
+	- např. u tohodle commandu jsou uvozovky, nemá to Tomáš expandovat
+	- flag že jsou jednoduché uvozovky se neexpandujou ASI???
+	- jednoduché uvozovky zabraňuje expandování variables
+	- dát si pozor i na mojí straně
+- FIX: když dá v našem minishellu echo "hello",
+	vypíše to "hello" doslova a mělo by to být bez uvozovek
+- může být i jedno slovo jen v uvozovkách
+- vysrat se na to když nejsou ukončené uvozovky
+- 3 argument envp
+- parse(input, envp) <- přidám nový argument
 */
