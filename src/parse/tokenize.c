@@ -3,19 +3,46 @@
 /*                                                        :::      ::::::::   */
 /*   tokenize.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tomasklaus <tomasklaus@student.42.fr>      +#+  +:+       +#+        */
+/*   By: davidmalasek <davidmalasek@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/24 13:43:43 by davidmalase       #+#    #+#             */
-/*   Updated: 2025/07/06 10:48:15 by tomasklaus       ###   ########.fr       */
+/*   Updated: 2025/07/24 11:07:56 by davidmalase      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
-/**
- * @return Token (PIPE, REDIR_IN, HEREDOC, REDIR_OUT, APPEND_OUT, WORD)
- */
-t_token	get_token(char *component)
+char	*get_env_value(t_env *env, const char *key)
+{
+	while (env)
+	{
+		if (ft_strcmp(env->key, key) == 0)
+			return (env->value);
+		env = env->next;
+	}
+	return (NULL);
+}
+
+char	*expand_variable(const char *token, t_env *env, int last_exit_status)
+{
+	char	*key;
+	char	*value;
+
+	if (ft_strcmp(token, "$?") == 0)
+		return (ft_itoa(last_exit_status));
+	if (token[0] == '$' && token[1] != '\0')
+	{
+		key = ft_strdup(token + 1);
+		value = get_env_value(env, key);
+		free(key);
+		if (value)
+			return (ft_strdup(value));
+		return (ft_strdup(""));
+	}
+	return (ft_strdup(token));
+}
+
+t_token	process_token(const char *component, t_env *env, int last_exit_status)
 {
 	t_token	token;
 
@@ -30,22 +57,31 @@ t_token	get_token(char *component)
 	else if (ft_strcmp(component, ">>") == 0)
 		token.type = APPEND_OUT;
 	else
+	{
+		if (component[0] == '$')
+		{
+			if (ft_strcmp(component, "$?") == 0)
+				token.value = ft_itoa(last_exit_status);
+			else
+				token.value = expand_variable(component, env, last_exit_status);
+		}
+		else
+			token.value = ft_strdup(component);
 		token.type = WORD;
-	token.value = ft_strdup(component);
+	}
 	return (token);
 }
-/**
- * @return Array of tokens
- */
-t_token	*tokenize(char *input)
+
+t_token	*tokenize(char *input, t_env *env, int last_exit_status,
+		int *has_quotes)
 {
 	char	**input_split;
 	t_token	*tokens;
 	size_t	components_count;
 	size_t	i;
-	i=0;
 
-	input_split = ft_split(input, ' ');
+	i = 0;
+	input_split = custom_split(input, ' ', has_quotes);
 	if (!input_split)
 		return (NULL);
 	components_count = get_array_length(input_split);
@@ -54,7 +90,7 @@ t_token	*tokenize(char *input)
 		return (NULL);
 	while (i < components_count)
 	{
-		tokens[i] = get_token(input_split[i]);
+		tokens[i] = process_token(input_split[i], env, last_exit_status);
 		free(input_split[i]);
 		i++;
 	}

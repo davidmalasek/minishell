@@ -6,24 +6,18 @@
 /*   By: davidmalasek <davidmalasek@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/22 11:57:02 by dmalasek          #+#    #+#             */
-/*   Updated: 2025/07/08 16:25:40 by davidmalase      ###   ########.fr       */
+/*   Updated: 2025/07/24 11:08:38 by davidmalase      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
-/**
- * @return 1 if character is a delimiter (or end of string), otherwise 0
- */
-static int	is_delimiter(char character, char delimiter)
+int	is_delimiter(char character, char delimiter)
 {
 	return (character == delimiter || character == '\0');
 }
 
-/**
- * Copies token into buffer without quotes
- */
-static void	copy_token(char *dest, const char *src, size_t length)
+void	copy_token(char *dest, const char *src, size_t length)
 {
 	size_t	i;
 
@@ -40,10 +34,8 @@ static void	copy_token(char *dest, const char *src, size_t length)
 	}
 	dest[length] = '\0';
 }
-/**
- * Returns token without quotes and moves the cursor.
- */
-static char	*get_token(const char **cursor, char delimiter)
+
+char	*get_token(const char **cursor, char delimiter, int *has_quotes)
 {
 	const char	*start;
 	size_t		length;
@@ -56,7 +48,10 @@ static char	*get_token(const char **cursor, char delimiter)
 	while (start[length])
 	{
 		if (!quote_char && (start[length] == '\'' || start[length] == '"'))
+		{
 			quote_char = start[length];
+			*has_quotes = 1;
+		}
 		else if (quote_char && start[length] == quote_char)
 			quote_char = 0;
 		else if (!quote_char && is_delimiter(start[length], delimiter))
@@ -75,10 +70,7 @@ static char	*get_token(const char **cursor, char delimiter)
 	return (token);
 }
 
-/**
- * Returns array of strings - escaped tokens.
- */
-char	**minishell_split(const char *input, char delimiter)
+char	**custom_split(const char *input, char delimiter, int *has_quotes)
 {
 	size_t		token_count;
 	const char	*scan;
@@ -88,13 +80,14 @@ char	**minishell_split(const char *input, char delimiter)
 
 	scan = input;
 	token_count = 0;
+	*has_quotes = 0;
 	while (*scan)
 	{
 		while (*scan && is_delimiter(*scan, delimiter))
 			++scan;
 		if (!*scan)
 			break ;
-		discard = get_token(&scan, delimiter);
+		discard = get_token(&scan, delimiter, has_quotes);
 		if (!discard)
 			return (NULL);
 		free(discard);
@@ -110,7 +103,7 @@ char	**minishell_split(const char *input, char delimiter)
 			++input;
 		if (!*input)
 			break ;
-		tokens[index] = get_token(&input, delimiter);
+		tokens[index] = get_token(&input, delimiter, has_quotes);
 		if (!tokens[index])
 		{
 			while (index > 0)

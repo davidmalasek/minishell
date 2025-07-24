@@ -6,13 +6,13 @@
 /*   By: davidmalasek <davidmalasek@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/22 11:57:02 by dmalasek          #+#    #+#             */
-/*   Updated: 2025/07/08 21:58:33 by davidmalase      ###   ########.fr       */
+/*   Updated: 2025/07/24 11:19:45 by davidmalase      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
-static void	init_command(t_command *command)
+void	init_command(t_command *command)
 {
 	command->infile = NULL;
 	command->outfile = NULL;
@@ -35,10 +35,7 @@ size_t	count_args(t_token *tokens, size_t index)
 	return (count);
 }
 
-/**
- * Fills commands with data and stores them in array of commands.
- */
-static void	fill_command_fields(t_command *commands, t_token *tokens,
+void	fill_command_fields(t_command *commands, t_token *tokens,
 		size_t *tkn_index)
 {
 	size_t	arg_index;
@@ -74,15 +71,14 @@ static void	fill_command_fields(t_command *commands, t_token *tokens,
 			(*tkn_index)++;
 			if (tokens[*tkn_index].type == WORD)
 				commands->heredoc_delimiter = ft_strdup(tokens[*tkn_index].value);
+			else
+				commands->heredoc_delimiter = NULL;
 		}
 		(*tkn_index)++;
 	}
 }
 
-/**
- * Frees already allocated space for args when allocation fails.
- */
-static void	free_commands(t_command *commands, size_t count)
+void	free_commands(t_command *commands, size_t count)
 {
 	size_t	i;
 
@@ -98,17 +94,15 @@ static void	free_commands(t_command *commands, size_t count)
 	free(commands);
 }
 
-/**
- * @return Array of commands filled with data
- */
-t_command	*parse(char *input)
+t_command	*parse(char *input, t_env *env, int last_exit_status)
 {
 	t_token		*tokens;
 	t_command	*commands;
 	size_t		cmd_index;
 	size_t		tkn_index;
+	int			has_quotes;
 
-	tokens = tokenize(input);
+	tokens = tokenize(input, env, last_exit_status, &has_quotes);
 	if (!tokens)
 		return (NULL);
 	commands = malloc(sizeof(t_command) * (get_command_count(tokens) + 1));
@@ -124,6 +118,7 @@ t_command	*parse(char *input)
 		if (!commands[cmd_index].args)
 			return (free_commands(commands, cmd_index), free(tokens), NULL);
 		fill_command_fields(&commands[cmd_index], tokens, &tkn_index);
+		commands[cmd_index].has_quotes = has_quotes;
 		if (tokens[tkn_index].type == PIPE)
 		{
 			commands[cmd_index].pipe_to_next = 1;
@@ -132,37 +127,5 @@ t_command	*parse(char *input)
 		cmd_index++;
 	}
 	commands[cmd_index].args = NULL;
-	commands[cmd_index].infile = NULL;
-	commands[cmd_index].outfile = NULL;
-	commands[cmd_index].heredoc_delimiter = NULL;
-	commands[cmd_index].append = 0;
-	commands[cmd_index].pipe_to_next = 0;
 	return (free(tokens), commands);
 }
-
-/*
-TODO:
-- používat inline copilot!!!!
-- co když input není validní?
-- implementovat quoting a escaping
-- heredoc nefunguje (registruje jako outfile a append?) - mám screenshot uložený
-	- vyzkoušet co to vypisuje
-- environment variables (převzít od Tomáše)
-	- nahradit v tokenu $PWD tím co pod tím skutečně je
-	- dollar by neměl fungovat uprostřed quotes
-	- nějaká special funkce: char *key = getenv(“KEY”);
-- $?
-	- pokud byl command úspěšný vrátí to 0
-	- tomáš řeší funkci, kterou mi poskytne na toto
-- když jsou uvozovky, nastavit nějaký flag (posílat ho s command listem)
-	- např. u tohodle commandu jsou uvozovky, nemá to Tomáš expandovat
-	- flag že jsou jednoduché uvozovky se neexpandujou ASI???
-	- jednoduché uvozovky zabraňuje expandování variables
-	- dát si pozor i na mojí straně
-- FIX: když dá v našem minishellu echo "hello",
-	vypíše to "hello" doslova a mělo by to být bez uvozovek
-- může být i jedno slovo jen v uvozovkách
-- vysrat se na to když nejsou ukončené uvozovky
-- 3 argument envp
-- parse(input, envp) <- přidám nový argument
-*/
