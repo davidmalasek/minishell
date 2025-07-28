@@ -6,7 +6,7 @@
 /*   By: tomasklaus <tomasklaus@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2025/07/28 12:35:22 by tomasklaus       ###   ########.fr       */
+/*   Updated: 2025/07/28 21:42:45 by tomasklaus       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,8 @@
 # define SUCCESS 0
 # define ERROR 1
 
+#define ECHON 17664
+
 // environment structure for env linked list
 typedef struct s_env
 {
@@ -47,6 +49,7 @@ t_env				*load_env(char **envp);
 char				**env_list_to_array(t_env *env);
 int					add_env_node(t_env **head, char *key, char *value,
 						int exported);
+int 				setup_signal_handlers();
 
 /* PARSING */
 typedef struct s_token
@@ -72,7 +75,7 @@ size_t				get_token_count(t_token *tokens);
 size_t				get_command_count(t_token *tokens);
 
 // src/parse/tokenize.c
-t_token				process_token(const char *component, t_env *env,
+t_token				process_token(char *component, t_env *env,
 						int last_exit_status);
 t_token				*tokenize(char *input, t_env *env, int last_exit_status,
 						int *has_quotes);
@@ -86,7 +89,7 @@ char				**custom_split(const char *input, char delimiter,
 
 /* EXECUTION */
 // src/exec/
-int					exec(t_command *command_list, t_env *env);
+int					exec(t_command *command_list, t_env *env, int *status);
 char				*resolve_path(char *command);
 int					redir_setup(t_command *command);
 int					is_parent_builtin(char *str);
@@ -103,6 +106,6 @@ int					ft_pwd(void);
 int					ft_unset(char **args, t_env *env);
 
 int					arg_count(char **args);
-int					validate_args(char **args, char *command_name);
+int validate_args(char **args, char *command_name, int max_args, int min_args);
 
 #endif

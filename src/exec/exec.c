@@ -6,7 +6,7 @@
 /*   By: tomasklaus <tomasklaus@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/22 12:27:04 by tomasklaus        #+#    #+#             */
-/*   Updated: 2025/07/08 21:58:52 by tomasklaus       ###   ########.fr       */
+/*   Updated: 2025/07/28 22:36:28 by tomasklaus       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -126,9 +126,7 @@ int exec(t_command *command_list, t_env *env, int *status)
             signal(SIGINT, SIG_DFL);
             pipe_setup(command_list, pipe_fd, prev_pipe);
             redir_setup(command_list);
-            expand_exit_status(command_list->args, status);
-            // Print the whole command with all its args and redirections
-            printf("Executing command:\n");
+            //expand_exit_status(command_list->args, status);
            
             if (is_builtin(command_list->args[0]))
                 *status = exec_builtin(*command_list, env, *status);
@@ -137,6 +135,7 @@ int exec(t_command *command_list, t_env *env, int *status)
                 printf("minishell: command not found: %s\n", command_list->args[0]);
                 exit(EXIT_FAILURE);
             }
+            //printf("inside status > %d\n", *status);
             exit(*status);
         }
         else
@@ -150,7 +149,6 @@ int exec(t_command *command_list, t_env *env, int *status)
             }
             waitpid(pid, status, 0);
         }
-
         command_list++;
     }
     return SUCCESS;

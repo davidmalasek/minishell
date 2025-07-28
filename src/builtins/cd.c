@@ -6,7 +6,7 @@
 /*   By: tomasklaus <tomasklaus@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/04 20:58:01 by tomasklaus        #+#    #+#             */
-/*   Updated: 2025/07/06 10:49:28 by tomasklaus       ###   ########.fr       */
+/*   Updated: 2025/07/28 22:01:51 by tomasklaus       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,12 @@ int ft_cd(char **args, t_env *env)
 
     // Try to change directory
     if (chdir(args[1]) != 0)
+    {
+        ft_putstr_fd("cd: no such file or directory: ", 2);
+        ft_putstr_fd(args[1], 2);
+        ft_putstr_fd("\n", 2);
         return ERROR;
+    }
 
     // Update new PWD
     if (set_pwd_from_cwd(env, "PWD") != SUCCESS)

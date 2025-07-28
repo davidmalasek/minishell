@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   tokenize.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: davidmalasek <davidmalasek@student.42.f    +#+  +:+       +#+        */
+/*   By: tomasklaus <tomasklaus@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/24 13:43:43 by davidmalase       #+#    #+#             */
-/*   Updated: 2025/07/24 11:07:56 by davidmalase      ###   ########.fr       */
+/*   Updated: 2025/07/28 20:42:15 by tomasklaus       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
-char	*get_env_value(t_env *env, const char *key)
+char	*get_env_value(t_env *env, char *key)
 {
 	while (env)
 	{
@@ -23,7 +23,7 @@ char	*get_env_value(t_env *env, const char *key)
 	return (NULL);
 }
 
-char	*expand_variable(const char *token, t_env *env, int last_exit_status)
+char	*expand_variable(char *token, t_env *env, int last_exit_status)
 {
 	char	*key;
 	char	*value;
@@ -42,7 +42,7 @@ char	*expand_variable(const char *token, t_env *env, int last_exit_status)
 	return (ft_strdup(token));
 }
 
-t_token	process_token(const char *component, t_env *env, int last_exit_status)
+t_token	process_token(char *component, t_env *env, int last_exit_status)
 {
 	t_token	token;
 
