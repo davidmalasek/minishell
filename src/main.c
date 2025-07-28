@@ -6,37 +6,40 @@
 /*   By: tomasklaus <tomasklaus@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 15:30:36 by dmalasek          #+#    #+#             */
-/*   Updated: 2025/07/08 20:48:28 by tomasklaus       ###   ########.fr       */
+/*   Updated: 2025/07/08 22:11:43 by tomasklaus       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
 
-/* 
+/*
 TODO
-cleanup
+cleanup - exit sequence
+norminette
+memory leak check
+heredoc
+variable expansions
 */
 
-t_env *initialize_shell(char **envp)
+t_env	*initialize_shell(char **envp)
 {
-	t_env *env;
+	t_env	*env;
 
-	env = load_env(envp); // Copy env vars if needed
-
+	env = load_env(envp);    // Copy env vars if needed
 	setup_signal_handlers(); // Ctrl-C, Ctrl-\, Ctrl-D
-
-	return env;
+	return (env);
 }
 
-int main_loop(t_env *env)
+int	main_loop(t_env *env)
 {
-	int status = 0;
+	int			status;
+	char		*input;
+	t_command	*command_list;
+
+	status = 0;
 	while (1)
 	{
 		// this needs to be replaced by the proper structures
-		char *input;
-		t_command *command_list;
-
 		input = readline("minishell ➜ ");
 		if (input == NULL)
 		{
@@ -45,22 +48,18 @@ int main_loop(t_env *env)
 		}
 		if (input && *input)
 			add_history(input);
-
 		command_list = parse(input); // Parse input into structured commands
-
-		exec(command_list, env, &status); // Execute commands (pipeline, built-ins, execve, etc.)
-
-		//cleanup(command_list);
+		exec(command_list, env, &status);
+		// cleanup(command_list);
 	}
 }
 
-int main(int argc, char **argv, char **envp)
+int	main(int argc, char **argv, char **envp)
 {
+	t_env	*env;
+
 	(void)argc;
 	(void)argv;
-
-	t_env *env;
-
 	env = initialize_shell(envp);
 	main_loop(env);
 }

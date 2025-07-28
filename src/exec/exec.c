@@ -6,7 +6,7 @@
 /*   By: tomasklaus <tomasklaus@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/22 12:27:04 by tomasklaus        #+#    #+#             */
-/*   Updated: 2025/07/08 00:04:30 by tomasklaus       ###   ########.fr       */
+/*   Updated: 2025/07/08 21:58:52 by tomasklaus       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,6 +127,9 @@ int exec(t_command *command_list, t_env *env, int *status)
             pipe_setup(command_list, pipe_fd, prev_pipe);
             redir_setup(command_list);
             expand_exit_status(command_list->args, status);
+            // Print the whole command with all its args and redirections
+            printf("Executing command:\n");
+           
             if (is_builtin(command_list->args[0]))
                 *status = exec_builtin(*command_list, env, *status);
             else if (execve(resolve_path(command_list->args[0]), command_list->args, env_list_to_array(env)) == -1)

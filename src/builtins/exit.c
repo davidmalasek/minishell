@@ -6,7 +6,7 @@
 /*   By: tomasklaus <tomasklaus@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/04 20:57:25 by tomasklaus        #+#    #+#             */
-/*   Updated: 2025/07/07 23:47:47 by tomasklaus       ###   ########.fr       */
+/*   Updated: 2025/07/08 22:09:50 by tomasklaus       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 int ft_exit(char **args, int status)
 {
-    if (validate_args(args,"exit",2,1)!= SUCCESS)
+    if (validate_args(args, "exit", 2, 1) != SUCCESS)
         return ERROR;
     if (args && args[1])
         status = ft_atoi(args[1]);
