@@ -7,6 +7,7 @@ SRC = src/main.c \
 	src/parse/parse.c \
 	src/parse/utils.c \
 	src/parse/tokenize.c \
+	src/parse/preprocess.c \
 	src/builtins/cd.c \
 	src/builtins/echo.c \
 	src/builtins/env.c \

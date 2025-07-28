@@ -6,16 +6,13 @@
 /*   By: tomasklaus <tomasklaus@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/22 11:57:02 by dmalasek          #+#    #+#             */
-/*   Updated: 2025/07/07 21:24:20 by tomasklaus       ###   ########.fr       */
+/*   Updated: 2025/07/28 12:35:44 by tomasklaus       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
-/**
- * @return Number of tokens in an array of tokens (regardless of type)
- */
-size_t get_token_count(t_token *tokens)
+size_t	get_token_count(t_token *tokens)
 {
 	size_t count;
 
@@ -27,11 +24,7 @@ size_t get_token_count(t_token *tokens)
 	return (count);
 }
 
-/**
- * @return Number of commands in an array of tokens
- * Basically -> number of pipes + 1
- */
-size_t get_command_count(t_token *tokens)
+size_t	get_command_count(t_token *tokens)
 {
 	size_t count;
 	size_t i;
@@ -47,10 +40,7 @@ size_t get_command_count(t_token *tokens)
 	return (count + 1);
 }
 
-/**
- * @return Number of items in an array
- */
-size_t get_array_length(char **array)
+size_t	get_array_length(char **array)
 {
 	size_t len;
 
