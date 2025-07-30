@@ -6,7 +6,7 @@
 /*   By: tomasklaus <tomasklaus@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/22 12:27:04 by tomasklaus        #+#    #+#             */
-/*   Updated: 2025/07/28 22:36:28 by tomasklaus       ###   ########.fr       */
+/*   Updated: 2025/07/30 22:56:39 by tomasklaus       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,8 @@
 
 /*
 TODO:
-co delat kdyz uzivatel zada option u funkce kde nemusi byt - mozna osetrit uz v parsing?
+co delat kdyz uzivatel zada option u funkce kde nemusi byt
+	- mozna osetrit uz v parsing?
 co delat kdyz uzivatel zada vic nebo min argumentu nez je potreba
 co se stane kdyz se zada neexistujici command?
 
@@ -25,131 +26,103 @@ $? support — just track WEXITSTATUS after commands
 
  */
 
-int is_builtin(char *str)
+int	is_parent_builtin(t_command *command)
 {
-    if (!str)
-        return (0);
-    char *builtins[] = {
-        "echo", "cd", "pwd", "export", "unset", "env", "exit", NULL};
-    int i;
-
-    i = 0;
-    while (builtins[i])
-    {
-        if (ft_strcmp(str, builtins[i]) == 0)
-            return (1);
-        i++;
-    }
-    return (0);
+	if (!command || !command->args || !command->args[0])
+		return (0);
+	if (ft_strcmp(command->args[0], "cd") == 0)
+		return (1);
+	if (ft_strcmp(command->args[0], "exit") == 0)
+		return (1);
+	if (ft_strcmp(command->args[0], "unset") == 0)
+		return (1);
+	if (ft_strcmp(command->args[0], "export") == 0)
+	{
+		if (command->args[1] == NULL)
+			return (0);
+		return (1);
+	}
+	return (0);
 }
 
-int is_parent_builtin(char *str)
+int	exec_builtin(t_command command, t_env *env, int status)
 {
-    if (!str)
-        return (0);
-    char *parent_builtins[] = {"cd", "exit", "export", "unset", NULL};
-    int i;
-
-    i = 0;
-    while (parent_builtins[i])
-    {
-        if (ft_strcmp(str, parent_builtins[i]) == 0)
-            return (1);
-        i++;
-    }
-    return (0);
+	if (!command.args || !command.args[0])
+		return (ERROR);
+	if (ft_strcmp(command.args[0], "cd") == 0)
+		return (ft_cd(command.args, env));
+	else if (ft_strcmp(command.args[0], "echo") == 0)
+		return (ft_echo(command.args));
+	else if (ft_strcmp(command.args[0], "pwd") == 0)
+		return (ft_pwd());
+	else if (ft_strcmp(command.args[0], "export") == 0)
+		return (ft_export(command.args, env));
+	else if (ft_strcmp(command.args[0], "unset") == 0)
+		return (ft_unset(command.args, env));
+	else if (ft_strcmp(command.args[0], "env") == 0)
+		return (ft_env(command.args, env));
+	else if (ft_strcmp(command.args[0], "exit") == 0)
+		return (ft_exit(command.args, status));
+	return (ERROR);
 }
 
-int exec_builtin(t_command command, t_env *env, int status)
+static void	exec_child_process(t_command *command, t_env *env, int *status,
+		int pipes[4])
 {
-    if (!command.args || !command.args[0])
-        return (ERROR);
-
-    if (ft_strcmp(command.args[0], "cd") == 0)
-        return ft_cd(command.args, env);
-    else if (ft_strcmp(command.args[0], "echo") == 0)
-        return ft_echo(command.args);
-    else if (ft_strcmp(command.args[0], "pwd") == 0)
-        return ft_pwd();
-    else if (ft_strcmp(command.args[0], "export") == 0)
-        return ft_export(command.args, env);
-    else if (ft_strcmp(command.args[0], "unset") == 0)
-        return ft_unset(command.args, env);
-    else if (ft_strcmp(command.args[0], "env") == 0)
-        return ft_env(command.args, env);
-    else if (ft_strcmp(command.args[0], "exit") == 0)
-        return ft_exit(command.args, status);
-    return ERROR;
-}
-// this probably wont work once quotes handling is implemented
-void expand_exit_status(char **args, int *status)
-{
-    int i = 0;
-    char *status_str;
-
-    if (!args)
-        return;
-    status_str = ft_itoa(*status);
-    while (args[i])
-    {
-        if (ft_strcmp(args[i], "$?") == 0)
-        {
-            free(args[i]);
-            args[i] = ft_strdup(status_str);
-        }
-        i++;
-    }
-    free(status_str);
+	signal(SIGINT, SIG_DFL);
+	signal(SIGQUIT, SIG_DFL);
+	pipe_setup(command, &pipes[2], &pipes[0]);
+	redir_setup(command);
+	if (is_builtin(command->args[0]))
+		*status = exec_builtin(*command, env, *status);
+	else if (execve(resolve_path(command->args[0], env), command->args,
+			env_list_to_array(env)) == -1)
+	{
+		printf("minishell: command not found: %s\n", command->args[0]);
+		exit(EXIT_FAILURE);
+	}
+	exit(*status);
 }
 
-int exec(t_command *command_list, t_env *env, int *status)
+static void	exec_parent_process(t_command *command, int *status, int pipes[4])
 {
-    pid_t pid;
+	if (pipes[0] > 0)
+		close(pipes[0]);
+	if (command->pipe_to_next)
+	{
+		close(pipes[3]);
+		pipes[0] = pipes[2];
+	}
+	waitpid(-1, status, 0);
+}
+/* pipes[0]=prev_pipe_read, pipes[1]=prev_pipe_write,
+		pipes[2]=current_pipe_read, pipes[3]=current_pipe_write */
 
-    int prev_pipe[2] = {-1, -1};
+int	exec(t_command *command_list, t_env *env, int *status)
+{
+	pid_t	pid;
+	int		pipes[4];
 
-    while (command_list->args != NULL)
-    {
-        if (is_parent_builtin(command_list->args[0]) /* && no_redirs(command_list) */)
-        {
-            *status = exec_builtin(*command_list, env, *status);
-
-            command_list++;
-            continue;
-        }
-        int pipe_fd[2];
-        if (command_list->pipe_to_next)
-            pipe(pipe_fd);
-        pid = fork();
-        if (pid == 0)
-        {
-            signal(SIGINT, SIG_DFL);
-            pipe_setup(command_list, pipe_fd, prev_pipe);
-            redir_setup(command_list);
-            //expand_exit_status(command_list->args, status);
-           
-            if (is_builtin(command_list->args[0]))
-                *status = exec_builtin(*command_list, env, *status);
-            else if (execve(resolve_path(command_list->args[0]), command_list->args, env_list_to_array(env)) == -1)
-            {
-                printf("minishell: command not found: %s\n", command_list->args[0]);
-                exit(EXIT_FAILURE);
-            }
-            //printf("inside status > %d\n", *status);
-            exit(*status);
-        }
-        else
-        {
-            if (prev_pipe[0] > 0)
-                close(prev_pipe[0]);
-            if (command_list->pipe_to_next)
-            {
-                close(pipe_fd[1]);         // write end
-                prev_pipe[0] = pipe_fd[0]; // save read end
-            }
-            waitpid(pid, status, 0);
-        }
-        command_list++;
-    }
-    return SUCCESS;
+	pipes[0] = -1;
+	pipes[1] = -1;
+	pipes[2] = -1;
+	pipes[3] = -1;
+	while (command_list->args != NULL)
+	{
+		if (is_parent_builtin(command_list))
+		{
+			*status = exec_builtin(*command_list, env, *status);
+			command_list++;
+			continue ;
+		}
+		if (command_list->pipe_to_next)
+			pipe(&pipes[2]);
+		pid = fork();
+		if (pid == 0)
+			exec_child_process(command_list, env, status, pipes);
+		else
+			exec_parent_process(command_list, status, pipes);
+		command_list++;
+	}
+	return (SUCCESS);
 }

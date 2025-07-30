@@ -6,32 +6,32 @@
 /*   By: tomasklaus <tomasklaus@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/04 20:57:27 by tomasklaus        #+#    #+#             */
-/*   Updated: 2025/07/07 23:44:52 by tomasklaus       ###   ########.fr       */
+/*   Updated: 2025/07/30 22:35:50 by tomasklaus       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
-void print_env(char **envp)
+void	print_env(char **envp)
 {
-    int i;
+	int	i;
 
-    i = 0;
-    while (envp[i])
-    {
-        ft_putstr_fd(envp[i], 1);
-        ft_putchar_fd('\n', 1);
-        i++;
-    }
+	i = 0;
+	while (envp[i])
+	{
+		ft_putstr_fd(envp[i], 1);
+		ft_putchar_fd('\n', 1);
+		i++;
+	}
 }
 
-int ft_env(char **args, t_env *env)
+int	ft_env(char **args, t_env *env)
 {
-    if (validate_args(args, "env", 1, 1) != SUCCESS)
-        return ERROR;
-    char **envp;
+	char	**envp;
 
-    envp = env_list_to_array(env);
-    print_env(envp);
-    return SUCCESS;
+	if (validate_args(args, "env", 1, 1) != SUCCESS)
+		return (ERROR);
+	envp = env_list_to_array(env);
+	print_env(envp);
+	return (SUCCESS);
 }

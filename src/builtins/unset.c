@@ -6,52 +6,50 @@
 /*   By: tomasklaus <tomasklaus@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/04 20:57:08 by tomasklaus        #+#    #+#             */
-/*   Updated: 2025/07/07 23:47:53 by tomasklaus       ###   ########.fr       */
+/*   Updated: 2025/07/30 22:35:54 by tomasklaus       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
-int del_arg(char *new_key, t_env *env)
+int	del_arg(char *new_key, t_env *env)
 {
-    t_env *current = env;
-    t_env *prev = NULL;
+	t_env	*current;
+	t_env	*prev;
 
-    // Find the node with matching key
-    while (current)
-    {
-        if (ft_strcmp(current->key, new_key) == 0)
-        {
-            // Remove node from list
-            if (prev)
-                prev->next = current->next;
-            // If removing head, do nothing to env pointer (caller must handle)
-            // Free node
-            free(current->key);
-            free(current->value);
-            free(current);
-            return SUCCESS;
-        }
-        prev = current;
-        current = current->next;
-    }
-    // Not found
-    return ERROR;
+	current = env;
+	prev = NULL;
+	while (current)
+	{
+		if (ft_strcmp(current->key, new_key) == 0)
+		{
+			if (prev)
+				prev->next = current->next;
+			free(current->key);
+			free(current->value);
+			free(current);
+			return (SUCCESS);
+		}
+		prev = current;
+		current = current->next;
+	}
+	return (ERROR);
 }
 
-int ft_unset(char **args, t_env *env)
+int	ft_unset(char **args, t_env *env)
 {
-    if (validate_args(args, "unset", -1, 2) != SUCCESS)
-        return ERROR;
+	int	i;
+	int	status;
 
-    int i = 1;
-    while (args[i])
-    {
-        int status;
-        status = del_arg(args[i], env);
-        if (status == ERROR)
-            return ERROR;
-        i++;
-    }
-    return SUCCESS;
+	if (validate_args(args, "unset", -1, 2) != SUCCESS)
+		return (ERROR);
+	i = 1;
+	while (args[i])
+	{
+		status = del_arg(args[i], env);
+		if (status == ERROR)
+			return (ERROR);
+		i++;
+	}
+	return (SUCCESS);
 }

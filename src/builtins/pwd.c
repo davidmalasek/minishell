@@ -6,13 +6,13 @@
 /*   By: tomasklaus <tomasklaus@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/04 20:57:13 by tomasklaus        #+#    #+#             */
-/*   Updated: 2025/07/04 21:39:06 by tomasklaus       ###   ########.fr       */
+/*   Updated: 2025/07/30 22:35:53 by tomasklaus       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
-int		ft_pwd(void)
+int	ft_pwd(void)
 {
 	char	buf[PATH_MAX];
 
