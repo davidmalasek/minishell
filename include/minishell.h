@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tomasklaus <tomasklaus@student.42.fr>      +#+  +:+       +#+        */
+/*   By: dmalasek <dmalasek@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2025/07/30 22:35:45 by tomasklaus       ###   ########.fr       */
+/*   Updated: 2025/08/01 20:58:37 by dmalasek         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,7 @@ typedef struct s_command
 	char			*outfile;
 	int				append;
 	int				pipe_to_next;
-	char			*heredoc_delimiter;
+	char			*heredoc_delim;
 	int				has_quotes;
 }					t_command;
 
@@ -88,6 +88,10 @@ t_command			*parse(char *input, t_env *env, int last_exit_status);
 // src/parse/preprocess.c
 char				**custom_split(const char *input, char delimiter,
 						int *has_quotes);
+int					is_delimiter(char character, char delimiter);
+size_t				scan_token_length(const char *start, char delimiter,
+						int *has_quotes, char *quote_char_out);
+char				*alloc_and_copy_token(const char *start, size_t length);
 
 /* EXECUTION */
 // src/exec/
@@ -116,6 +120,14 @@ int					validate_args(char **args, char *command_name, int max_args,
 void				cleanup_env(t_env *env);
 void				cleanup_commands(t_command *command_list);
 void				cleanup_shell(t_command *command_list, t_env *env);
+
+// preprocess_utils.c
+char				*get_token(const char **cursor, char delimiter,
+						int *has_quotes);
+size_t				count_tokens(const char *input, char delimiter,
+						int *has_quotes);
+char				**fill_tokens(const char *input, char delimiter,
+						int *has_quotes, size_t token_count);
 
 // Define the global variable for signal interruption
 extern int			g_signal_interrupted;

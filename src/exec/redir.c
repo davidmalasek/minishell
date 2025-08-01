@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   redir.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tomasklaus <tomasklaus@student.42.fr>      +#+  +:+       +#+        */
+/*   By: dmalasek <dmalasek@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/06 17:22:53 by tomasklaus        #+#    #+#             */
-/*   Updated: 2025/07/30 22:55:24 by tomasklaus       ###   ########.fr       */
+/*   Updated: 2025/08/01 20:59:01 by dmalasek         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ int	pipe_setup(t_command *command, int pipe_fd[2], int prev_pipe[2])
 	return (SUCCESS);
 }
 
-static int	input_redir(const char *infile)
+int	input_redir(const char *infile)
 {
 	int	fd;
 
@@ -43,7 +43,7 @@ static int	input_redir(const char *infile)
 	return (SUCCESS);
 }
 
-static int	output_redir(const char *outfile, int append)
+int	output_redir(const char *outfile, int append)
 {
 	int	fd;
 
@@ -61,7 +61,7 @@ static int	output_redir(const char *outfile, int append)
 	return (SUCCESS);
 }
 
-static int	heredoc_redir(char *delimiter)
+int	heredoc_redir(char *delimiter)
 {
 	int		pipe_fd[2];
 	char	*line;
@@ -85,8 +85,8 @@ int	redir_setup(t_command *command)
 {
 	if (command->infile)
 		input_redir(command->infile);
-	if (command->heredoc_delimiter)
-		heredoc_redir(command->heredoc_delimiter);
+	if (command->heredoc_delim)
+		heredoc_redir(command->heredoc_delim);
 	if (command->outfile)
 		output_redir(command->outfile, command->append);
 	return (SUCCESS);

@@ -22,6 +22,7 @@ SRC = src/main.c \
 	src/exec/exec.c \
 	src/exec/utils.c \
 	src/exec/redir.c \
+	src/parse/preprocess_utils.c \
 	src/cleanup/cleanup.c
 	
 

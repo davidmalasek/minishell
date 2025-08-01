@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   preprocess.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: davidmalasek <davidmalasek@student.42.f    +#+  +:+       +#+        */
+/*   By: dmalasek <dmalasek@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/22 11:57:02 by dmalasek          #+#    #+#             */
-/*   Updated: 2025/07/24 11:08:38 by davidmalase      ###   ########.fr       */
+/*   Updated: 2025/08/01 20:57:11 by dmalasek         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,14 +35,12 @@ void	copy_token(char *dest, const char *src, size_t length)
 	dest[length] = '\0';
 }
 
-char	*get_token(const char **cursor, char delimiter, int *has_quotes)
+size_t	scan_token_length(const char *start, char delimiter, int *has_quotes,
+		char *quote_char_out)
 {
-	const char	*start;
-	size_t		length;
-	char		quote_char;
-	char		*token;
+	size_t	length;
+	char	quote_char;
 
-	start = *cursor;
 	length = 0;
 	quote_char = 0;
 	while (start[length])
@@ -58,61 +56,29 @@ char	*get_token(const char **cursor, char delimiter, int *has_quotes)
 			break ;
 		++length;
 	}
-	if (quote_char)
-		return (NULL);
+	*quote_char_out = quote_char;
+	return (length);
+}
+
+char	*alloc_and_copy_token(const char *start, size_t length)
+{
+	char	*token;
+
 	token = (char *)malloc(length + 1);
 	if (!token)
 		return (NULL);
-	copy_token(token, start, length);
-	*cursor += length;
-	while (**cursor && is_delimiter(**cursor, delimiter))
-		++(*cursor);
+	ft_strlcpy(token, start, length + 1);
 	return (token);
 }
 
 char	**custom_split(const char *input, char delimiter, int *has_quotes)
 {
-	size_t		token_count;
-	const char	*scan;
-	char		*discard;
-	char		**tokens;
-	size_t		index;
+	size_t	token_count;
+	char	**tokens;
 
-	scan = input;
-	token_count = 0;
-	*has_quotes = 0;
-	while (*scan)
-	{
-		while (*scan && is_delimiter(*scan, delimiter))
-			++scan;
-		if (!*scan)
-			break ;
-		discard = get_token(&scan, delimiter, has_quotes);
-		if (!discard)
-			return (NULL);
-		free(discard);
-		++token_count;
-	}
-	tokens = (char **)malloc(sizeof(char *) * (token_count + 1));
-	if (!tokens)
+	token_count = count_tokens(input, delimiter, has_quotes);
+	if (token_count == 0)
 		return (NULL);
-	index = 0;
-	while (*input && index < token_count)
-	{
-		while (*input && is_delimiter(*input, delimiter))
-			++input;
-		if (!*input)
-			break ;
-		tokens[index] = get_token(&input, delimiter, has_quotes);
-		if (!tokens[index])
-		{
-			while (index > 0)
-				free(tokens[--index]);
-			free(tokens);
-			return (NULL);
-		}
-		++index;
-	}
-	tokens[index] = NULL;
+	tokens = fill_tokens(input, delimiter, has_quotes, token_count);
 	return (tokens);
 }

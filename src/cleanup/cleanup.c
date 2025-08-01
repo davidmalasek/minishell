@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cleanup.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tomasklaus <tomasklaus@student.42.fr>      +#+  +:+       +#+        */
+/*   By: dmalasek <dmalasek@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 00:00:00 by tomasklaus        #+#    #+#             */
-/*   Updated: 2025/07/30 22:35:56 by tomasklaus       ###   ########.fr       */
+/*   Updated: 2025/08/01 21:02:24 by dmalasek         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,8 +51,8 @@ void	cleanup_commands(t_command *command_list)
 			free(command_list[i].infile);
 		if (command_list[i].outfile)
 			free(command_list[i].outfile);
-		if (command_list[i].heredoc_delimiter)
-			free(command_list[i].heredoc_delimiter);
+		if (command_list[i].heredoc_delim)
+			free(command_list[i].heredoc_delim);
 		i++;
 	}
 	free(command_list);

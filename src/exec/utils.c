@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tomasklaus <tomasklaus@student.42.fr>      +#+  +:+       +#+        */
+/*   By: dmalasek <dmalasek@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/06 12:07:52 by tomasklaus        #+#    #+#             */
-/*   Updated: 2025/07/30 22:55:23 by tomasklaus       ###   ########.fr       */
+/*   Updated: 2025/08/01 20:47:16 by dmalasek         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
-static char	*get_path_from_env(t_env *env)
+char	*get_path_from_env(t_env *env)
 {
 	t_env	*curr;
 
@@ -26,7 +26,7 @@ static char	*get_path_from_env(t_env *env)
 	return (NULL);
 }
 
-static void	free_str_array(char **arr)
+void	free_str_array(char **arr)
 {
 	int	i;
 
@@ -41,7 +41,7 @@ static void	free_str_array(char **arr)
 	free(arr);
 }
 
-static char	*join_and_check_access(const char *dir, const char *command)
+char	*join_and_check_access(const char *dir, const char *command)
 {
 	char	*tmp;
 	char	*full_path;

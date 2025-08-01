@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tomasklaus <tomasklaus@student.42.fr>      +#+  +:+       +#+        */
+/*   By: dmalasek <dmalasek@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/22 11:57:02 by dmalasek          #+#    #+#             */
-/*   Updated: 2025/07/29 23:01:09 by tomasklaus       ###   ########.fr       */
+/*   Updated: 2025/08/01 20:23:40 by dmalasek         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 size_t	get_token_count(t_token *tokens)
 {
-	size_t count;
+	size_t	count;
 
 	count = 0;
 	while (tokens[count].type != -1)
@@ -26,8 +26,8 @@ size_t	get_token_count(t_token *tokens)
 
 size_t	get_command_count(t_token *tokens)
 {
-	size_t count;
-	size_t i;
+	size_t	count;
+	size_t	i;
 
 	count = 0;
 	i = 0;
@@ -42,7 +42,7 @@ size_t	get_command_count(t_token *tokens)
 
 size_t	get_array_length(char **array)
 {
-	size_t len;
+	size_t	len;
 
 	len = 0;
 	while (array[len] != NULL)
@@ -50,4 +50,10 @@ size_t	get_array_length(char **array)
 		len++;
 	}
 	return (len);
+}
+
+int	ft_isalnum(int c)
+{
+	return ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0'
+			&& c <= '9'));
 }

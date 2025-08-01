@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tomasklaus <tomasklaus@student.42.fr>      +#+  +:+       +#+        */
+/*   By: dmalasek <dmalasek@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/22 11:57:02 by dmalasek          #+#    #+#             */
-/*   Updated: 2025/07/29 23:01:26 by tomasklaus       ###   ########.fr       */
+/*   Updated: 2025/08/01 20:54:04 by dmalasek         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ void	init_command(t_command *command)
 	command->outfile = NULL;
 	command->append = 0;
 	command->pipe_to_next = 0;
-	command->heredoc_delimiter = NULL;
+	command->heredoc_delim = NULL;
 }
 
 size_t	count_args(t_token *tokens, size_t index)
@@ -70,12 +70,13 @@ void	fill_command_fields(t_command *commands, t_token *tokens,
 		{
 			(*tkn_index)++;
 			if (tokens[*tkn_index].type == WORD)
-				commands->heredoc_delimiter = ft_strdup(tokens[*tkn_index].value);
+				commands->heredoc_delim = ft_strdup(tokens[*tkn_index].value);
 			else
-				commands->heredoc_delimiter = NULL;
+				commands->heredoc_delim = NULL;
 		}
 		(*tkn_index)++;
 	}
+	commands->args[arg_index] = NULL;
 }
 
 void	free_commands(t_command *commands, size_t count)
@@ -88,7 +89,7 @@ void	free_commands(t_command *commands, size_t count)
 		free(commands[i].args);
 		free(commands[i].infile);
 		free(commands[i].outfile);
-		free(commands[i].heredoc_delimiter);
+		free(commands[i].heredoc_delim);
 		i++;
 	}
 	free(commands);
@@ -119,6 +120,13 @@ t_command	*parse(char *input, t_env *env, int last_exit_status)
 			return (free_commands(commands, cmd_index), free(tokens), NULL);
 		fill_command_fields(&commands[cmd_index], tokens, &tkn_index);
 		commands[cmd_index].has_quotes = has_quotes;
+		if (commands[cmd_index].args[0] == NULL)
+		{
+			printf("minishell: syntax error near unexpected token\n");
+			free_commands(commands, cmd_index + 1);
+			free(tokens);
+			return (NULL);
+		}
 		if (tokens[tkn_index].type == PIPE)
 		{
 			commands[cmd_index].pipe_to_next = 1;

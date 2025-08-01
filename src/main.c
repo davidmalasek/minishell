@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tomasklaus <tomasklaus@student.42.fr>      +#+  +:+       +#+        */
+/*   By: dmalasek <dmalasek@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 15:30:36 by dmalasek          #+#    #+#             */
-/*   Updated: 2025/07/30 22:36:06 by tomasklaus       ###   ########.fr       */
+/*   Updated: 2025/08/01 21:01:01 by dmalasek         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ DAVID
 - heredoc stale nefunguje
 */
 
-int			g_signal_interrupted = 0;
+int		g_signal_interrupted = 0;
 
 t_env	*initialize_shell(char **envp)
 {
@@ -70,9 +70,9 @@ void	print_command(t_command *command_list)
 			printf("'%s'\n", cmd->outfile);
 		else
 			printf("(none)\n");
-		printf("heredoc_delimiter: ");
-		if (cmd->heredoc_delimiter)
-			printf("'%s'\n", cmd->heredoc_delimiter);
+		printf("heredoc_delim: ");
+		if (cmd->heredoc_delim)
+			printf("'%s'\n", cmd->heredoc_delim);
 		else
 			printf("(none)\n");
 		printf("append: %d\n", cmd->append);
@@ -82,7 +82,7 @@ void	print_command(t_command *command_list)
 	}
 }
 
-static char	*get_input(void)
+char	*get_input(void)
 {
 	char	*input;
 
@@ -91,7 +91,10 @@ static char	*get_input(void)
 	if (input == NULL)
 	{
 		if (g_signal_interrupted)
+		{
+			g_signal_interrupted = 0;
 			return (NULL);
+		}
 		write(STDOUT_FILENO, "exit\n", 5);
 		exit(EXIT_SUCCESS);
 	}
@@ -102,6 +105,33 @@ static char	*get_input(void)
 	}
 	add_history(input);
 	return (input);
+}
+
+int	validate_input(char *input)
+{
+	char	*trimmed;
+	int		len;
+
+	if (!input || input[0] == '\0')
+		return (0);
+	trimmed = input;
+	while (*trimmed && *trimmed == ' ')
+		trimmed++;
+	len = ft_strlen(trimmed);
+	if (len == 0)
+		return (0);
+	if (trimmed[0] == '>' || trimmed[0] == '<' || trimmed[0] == '|')
+	{
+		printf("minishell: syntax error near unexpected token '%c'\n",
+			trimmed[0]);
+		return (0);
+	}
+	if ((trimmed[0] == '"' && len == 1) || (trimmed[0] == '\'' && len == 1))
+	{
+		printf("minishell: syntax error: unclosed quote\n");
+		return (0);
+	}
+	return (1);
 }
 
 int	main_loop(t_env *env)
@@ -115,13 +145,30 @@ int	main_loop(t_env *env)
 	{
 		input = get_input();
 		if (!input)
+		{
+			if (g_signal_interrupted)
+			{
+				g_signal_interrupted = 0;
+				continue ;
+			}
 			continue ;
+		}
+		if (!validate_input(input))
+		{
+			free(input);
+			continue ;
+		}
 		if (status == ECHON)
 		{
 			ft_putchar_fd('\n', 1);
 			status = 0;
 		}
 		command_list = parse(input, env, status);
+		if (!command_list)
+		{
+			free(input);
+			continue ;
+		}
 		// print_command(command_list);
 		exec(command_list, env, &status);
 		cleanup_commands(command_list);
