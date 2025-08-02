@@ -6,7 +6,7 @@
 /*   By: dmalasek <dmalasek@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/01 20:45:31 by dmalasek          #+#    #+#             */
-/*   Updated: 2025/08/01 20:47:36 by dmalasek         ###   ########.fr       */
+/*   Updated: 2025/08/02 11:43:20 by dmalasek         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,4 +87,15 @@ char	**fill_tokens(const char *input, char delimiter, int *has_quotes,
 	}
 	tokens[index] = NULL;
 	return (tokens);
+}
+
+int	is_delimiter(char character, char delimiter)
+{
+	return (character == delimiter || character == '\0');
+}
+
+int	is_operator(const char *s)
+{
+	return ((s[0] == '<' && s[1] == '<') || (s[0] == '>' && s[1] == '>')
+		|| s[0] == '<' || s[0] == '>' || s[0] == '|');
 }

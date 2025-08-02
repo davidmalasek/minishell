@@ -6,7 +6,7 @@
 /*   By: dmalasek <dmalasek@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/22 11:57:02 by dmalasek          #+#    #+#             */
-/*   Updated: 2025/08/01 20:23:40 by dmalasek         ###   ########.fr       */
+/*   Updated: 2025/08/02 11:45:23 by dmalasek         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,4 +56,19 @@ int	ft_isalnum(int c)
 {
 	return ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0'
 			&& c <= '9'));
+}
+
+size_t	operator_token_length(const char *start, char *quote_char_out)
+{
+	if ((start[0] == '<' && start[1] == '<') || (start[0] == '>'
+			&& start[1] == '>'))
+	{
+		*quote_char_out = 0;
+		return (2);
+	}
+	else
+	{
+		*quote_char_out = 0;
+		return (1);
+	}
 }

@@ -6,134 +6,80 @@
 /*   By: dmalasek <dmalasek@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/22 11:57:02 by dmalasek          #+#    #+#             */
-/*   Updated: 2025/08/01 20:54:04 by dmalasek         ###   ########.fr       */
+/*   Updated: 2025/08/02 12:37:47 by dmalasek         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
-void	init_command(t_command *command)
+int	alloc_command_args(t_command *cmd, t_token *tokens, size_t tkn_index)
 {
-	command->infile = NULL;
-	command->outfile = NULL;
-	command->append = 0;
-	command->pipe_to_next = 0;
-	command->heredoc_delim = NULL;
+	size_t	argc;
+
+	argc = count_args(tokens, tkn_index);
+	cmd->args = malloc(sizeof(char *) * (argc + 1));
+	return (cmd->args != NULL);
 }
 
-size_t	count_args(t_token *tokens, size_t index)
-{
-	size_t	count;
-
-	count = 0;
-	while (tokens[index].type != PIPE && tokens[index].type != -1)
-	{
-		if (tokens[index].type == WORD)
-			count++;
-		index++;
-	}
-	return (count);
-}
-
-void	fill_command_fields(t_command *commands, t_token *tokens,
+int	process_command(t_command *cmds, t_token *tokens, size_t *cmd_index,
 		size_t *tkn_index)
 {
-	size_t	arg_index;
-
-	arg_index = 0;
-	while (tokens[*tkn_index].type != PIPE && tokens[*tkn_index].type != -1)
-	{
-		if (tokens[*tkn_index].type == WORD)
-			commands->args[arg_index++] = ft_strdup(tokens[*tkn_index].value);
-		else if (tokens[*tkn_index].type == REDIR_OUT)
-		{
-			(*tkn_index)++;
-			if (tokens[*tkn_index].type == WORD)
-				commands->outfile = ft_strdup(tokens[*tkn_index].value);
-		}
-		else if (tokens[*tkn_index].type == APPEND_OUT)
-		{
-			(*tkn_index)++;
-			if (tokens[*tkn_index].type == WORD)
-			{
-				commands->outfile = ft_strdup(tokens[*tkn_index].value);
-				commands->append = 1;
-			}
-		}
-		else if (tokens[*tkn_index].type == REDIR_IN)
-		{
-			(*tkn_index)++;
-			if (tokens[*tkn_index].type == WORD)
-				commands->infile = ft_strdup(tokens[*tkn_index].value);
-		}
-		else if (tokens[*tkn_index].type == HEREDOC)
-		{
-			(*tkn_index)++;
-			if (tokens[*tkn_index].type == WORD)
-				commands->heredoc_delim = ft_strdup(tokens[*tkn_index].value);
-			else
-				commands->heredoc_delim = NULL;
-		}
-		(*tkn_index)++;
-	}
-	commands->args[arg_index] = NULL;
+	init_command(&cmds[*cmd_index]);
+	if (!alloc_command_args(&cmds[*cmd_index], tokens, *tkn_index))
+		return (0);
+	fill_command_fields(&cmds[*cmd_index], tokens, tkn_index);
+	if (cmds[*cmd_index].args[0] == NULL)
+		return (-1);
+	(*cmd_index)++;
+	return (1);
 }
 
-void	free_commands(t_command *commands, size_t count)
+void	handle_pipe(t_command *cmds, t_token *tokens, size_t *cmd_index,
+		size_t *tkn_index)
 {
-	size_t	i;
-
-	i = 0;
-	while (i < count)
+	if (tokens[*tkn_index].type == PIPE)
 	{
-		free(commands[i].args);
-		free(commands[i].infile);
-		free(commands[i].outfile);
-		free(commands[i].heredoc_delim);
-		i++;
+		cmds[*cmd_index].pipe_to_next = 1;
+		(*tkn_index)++;
 	}
-	free(commands);
+}
+
+t_command	*process_all_commands(t_command *cmds, t_token *tokens,
+		int has_quotes)
+{
+	size_t	cmd_index;
+	size_t	tkn_index;
+	size_t	total_commands;
+	int		ret;
+
+	cmd_index = 0;
+	tkn_index = 0;
+	total_commands = get_command_count(tokens);
+	while (cmd_index < total_commands)
+	{
+		cmds[cmd_index].has_quotes = has_quotes;
+		ret = process_command(cmds, tokens, &cmd_index, &tkn_index);
+		if (ret == 0)
+			return (free_commands(cmds, cmd_index), free(tokens), NULL);
+		if (ret == -1)
+			return (printf("minishell: syntax error near unexpected token\n"),
+				free_commands(cmds, cmd_index + 1), free(tokens), NULL);
+		handle_pipe(cmds, tokens, &cmd_index, &tkn_index);
+	}
+	return (cmds[cmd_index].args = NULL, free(tokens), cmds);
 }
 
 t_command	*parse(char *input, t_env *env, int last_exit_status)
 {
 	t_token		*tokens;
-	t_command	*commands;
-	size_t		cmd_index;
-	size_t		tkn_index;
+	t_command	*cmds;
 	int			has_quotes;
 
 	tokens = tokenize(input, env, last_exit_status, &has_quotes);
 	if (!tokens)
 		return (NULL);
-	commands = malloc(sizeof(t_command) * (get_command_count(tokens) + 1));
-	if (!commands)
+	cmds = malloc(sizeof(t_command) * (get_command_count(tokens) + 1));
+	if (!cmds)
 		return (free(tokens), NULL);
-	cmd_index = 0;
-	tkn_index = 0;
-	while (cmd_index < get_command_count(tokens))
-	{
-		init_command(&commands[cmd_index]);
-		commands[cmd_index].args = malloc(sizeof(char *) * (count_args(tokens,
-						tkn_index) + 1));
-		if (!commands[cmd_index].args)
-			return (free_commands(commands, cmd_index), free(tokens), NULL);
-		fill_command_fields(&commands[cmd_index], tokens, &tkn_index);
-		commands[cmd_index].has_quotes = has_quotes;
-		if (commands[cmd_index].args[0] == NULL)
-		{
-			printf("minishell: syntax error near unexpected token\n");
-			free_commands(commands, cmd_index + 1);
-			free(tokens);
-			return (NULL);
-		}
-		if (tokens[tkn_index].type == PIPE)
-		{
-			commands[cmd_index].pipe_to_next = 1;
-			tkn_index++;
-		}
-		cmd_index++;
-	}
-	commands[cmd_index].args = NULL;
-	return (free(tokens), commands);
+	return (process_all_commands(cmds, tokens, has_quotes));
 }

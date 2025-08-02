@@ -6,7 +6,7 @@
 /*   By: dmalasek <dmalasek@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/06 17:22:53 by tomasklaus        #+#    #+#             */
-/*   Updated: 2025/08/01 20:59:01 by dmalasek         ###   ########.fr       */
+/*   Updated: 2025/08/02 12:06:03 by dmalasek         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,6 @@ int	heredoc_redir(char *delimiter)
 	char	*line;
 
 	pipe(pipe_fd);
-	printf("setting up heredoc");
 	while (1)
 	{
 		line = readline("> ");
@@ -77,7 +76,10 @@ int	heredoc_redir(char *delimiter)
 		write(pipe_fd[1], "\n", 1);
 		free(line);
 	}
+	free(line);
 	close(pipe_fd[1]);
+	dup2(pipe_fd[0], STDIN_FILENO);
+	close(pipe_fd[0]);
 	return (SUCCESS);
 }
 

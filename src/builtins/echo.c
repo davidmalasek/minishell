@@ -6,13 +6,13 @@
 /*   By: dmalasek <dmalasek@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/04 20:57:57 by tomasklaus        #+#    #+#             */
-/*   Updated: 2025/08/01 21:01:57 by dmalasek         ###   ########.fr       */
+/*   Updated: 2025/08/02 11:41:39 by dmalasek         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
-static int	echo_flag_n(char **args, int *start)
+int	echo_flag_n(char **args, int *start)
 {
 	int	i;
 	int	flag;
@@ -36,7 +36,7 @@ static int	echo_flag_n(char **args, int *start)
 	return (flag);
 }
 
-static void	echo_print_args(char **args, int start)
+void	echo_print_args(char **args, int start)
 {
 	int	i;
 

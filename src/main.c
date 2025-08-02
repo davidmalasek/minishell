@@ -6,35 +6,13 @@
 /*   By: dmalasek <dmalasek@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 15:30:36 by dmalasek          #+#    #+#             */
-/*   Updated: 2025/08/01 21:01:01 by dmalasek         ###   ########.fr       */
+/*   Updated: 2025/08/02 12:42:20 by dmalasek         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
 
-/*
-TODO
-cleanup - exit sequence
-norminette
-memory leak check
-heredoc
-variable expansions
-
-DAVID
-- single quotes
-- heredoc stale nefunguje
-*/
-
 int		g_signal_interrupted = 0;
-
-t_env	*initialize_shell(char **envp)
-{
-	t_env	*env;
-
-	env = load_env(envp);
-	setup_signal_handlers();
-	return (env);
-}
 
 void	print_command(t_command *command_list)
 {
@@ -82,97 +60,41 @@ void	print_command(t_command *command_list)
 	}
 }
 
-char	*get_input(void)
+void	execute_and_cleanup(char *input, t_env *env, int *status)
 {
-	char	*input;
+	t_command	*command_list;
 
-	g_signal_interrupted = 0;
-	input = readline("minishell ➜ ");
-	if (input == NULL)
-	{
-		if (g_signal_interrupted)
-		{
-			g_signal_interrupted = 0;
-			return (NULL);
-		}
-		write(STDOUT_FILENO, "exit\n", 5);
-		exit(EXIT_SUCCESS);
-	}
-	if (input[0] == '\0')
+	command_list = parse(input, env, *status);
+	if (!command_list)
 	{
 		free(input);
-		return (NULL);
+		return ;
 	}
-	add_history(input);
-	return (input);
-}
-
-int	validate_input(char *input)
-{
-	char	*trimmed;
-	int		len;
-
-	if (!input || input[0] == '\0')
-		return (0);
-	trimmed = input;
-	while (*trimmed && *trimmed == ' ')
-		trimmed++;
-	len = ft_strlen(trimmed);
-	if (len == 0)
-		return (0);
-	if (trimmed[0] == '>' || trimmed[0] == '<' || trimmed[0] == '|')
-	{
-		printf("minishell: syntax error near unexpected token '%c'\n",
-			trimmed[0]);
-		return (0);
-	}
-	if ((trimmed[0] == '"' && len == 1) || (trimmed[0] == '\'' && len == 1))
-	{
-		printf("minishell: syntax error: unclosed quote\n");
-		return (0);
-	}
-	return (1);
+	// print_command(command_list);
+	exec(command_list, env, status);
+	cleanup_commands(command_list);
+	free(input);
 }
 
 int	main_loop(t_env *env)
 {
-	int			status;
-	char		*input;
-	t_command	*command_list;
+	int		status;
+	char	*input;
 
 	status = 0;
 	while (1)
 	{
 		input = get_input();
-		if (!input)
-		{
-			if (g_signal_interrupted)
-			{
-				g_signal_interrupted = 0;
-				continue ;
-			}
+		if (handle_empty_or_signal(input))
 			continue ;
-		}
-		if (!validate_input(input))
-		{
-			free(input);
+		if (handle_invalid_input(input))
 			continue ;
-		}
 		if (status == ECHON)
 		{
 			ft_putchar_fd('\n', 1);
 			status = 0;
 		}
-		command_list = parse(input, env, status);
-		if (!command_list)
-		{
-			free(input);
-			continue ;
-		}
-		// print_command(command_list);
-		exec(command_list, env, &status);
-		cleanup_commands(command_list);
-		free(input);
+		execute_and_cleanup(input, env, &status);
 	}
 }
 

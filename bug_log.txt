@@ -1,23 +1,3 @@
-------------------------- heredoc stale nefunguje
-
-minishell ➜ cat << END
----- Command ----
-args: 'cat' 
-infile: (none)
-outfile: 'END'
-heredoc_delimiter: (none)
-append: 1
-pipe_to_next: 0
-
-✅ ------------------------- ctrl-\ v bashi udela cancel procesu ale u me ne
-
-minishell ➜ cat
-^\
-
-✅ ------------------------- po odstraneni PATH z env by nemelo nic fungovat ale funguje  
-
-minishell ➜ unset PATH
-
 ---------------------------- 16-byte leak originating from ft_strdup
 
 STACK OF 1 INSTANCE OF 'ROOT LEAK: <malloc in ft_strdup>':

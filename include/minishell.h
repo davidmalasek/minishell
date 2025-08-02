@@ -6,7 +6,7 @@
 /*   By: dmalasek <dmalasek@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2025/08/01 20:58:37 by dmalasek         ###   ########.fr       */
+/*   Updated: 2025/08/02 12:43:01 by dmalasek         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@
 # define REDIR_OUT 2
 # define REDIR_IN 3
 # define APPEND_OUT 4
-# define HEREDOC 4
+# define HEREDOC 5
 
 # define SUCCESS 0
 # define ERROR 1
@@ -71,16 +71,27 @@ typedef struct s_command
 	int				has_quotes;
 }					t_command;
 
+// src/main.c
+t_env				*initialize_shell(char **envp);
+char				*get_input(void);
+int					validate_input(char *input);
+int					handle_empty_or_signal(char *input);
+int					handle_invalid_input(char *input);
+
 // src/parse/utils.c
 size_t				get_array_length(char **array);
 size_t				get_token_count(t_token *tokens);
 size_t				get_command_count(t_token *tokens);
+size_t				operator_token_length(const char *start,
+						char *quote_char_out);
 
 // src/parse/tokenize.c
 t_token				process_token(char *component, t_env *env,
 						int last_exit_status);
 t_token				*tokenize(char *input, t_env *env, int last_exit_status,
 						int *has_quotes);
+char				*expand_in_double_quotes(char *component, t_env *env,
+						int last_exit_status);
 
 // src/parse/parse.c
 t_command			*parse(char *input, t_env *env, int last_exit_status);
@@ -121,13 +132,62 @@ void				cleanup_env(t_env *env);
 void				cleanup_commands(t_command *command_list);
 void				cleanup_shell(t_command *command_list, t_env *env);
 
-// preprocess_utils.c
+// src/parse/preprocess_utils.c
 char				*get_token(const char **cursor, char delimiter,
 						int *has_quotes);
 size_t				count_tokens(const char *input, char delimiter,
 						int *has_quotes);
 char				**fill_tokens(const char *input, char delimiter,
 						int *has_quotes, size_t token_count);
+int					is_delimiter(char character, char delimiter);
+int					is_operator(const char *s);
+
+// src/parse/tokenize_utils.c
+char				*get_env_value(t_env *env, char *key);
+char				*expand_variable(char *token, t_env *env,
+						int last_exit_status);
+int					is_single_quoted(char *component);
+char				*remove_quotes(char *component);
+int					is_double_quoted(char *component);
+
+// src/parse/tokenize_utils_2.c
+char				*extract_quoted_content(char *component);
+char				*handle_simple_exit_status(char *content,
+						int last_exit_status);
+char				*handle_exit_status_with_context(char *content,
+						char *dollar_pos, int last_exit_status);
+char				*find_variable_end(char *var_start);
+char				*build_result_from_parts(char *before, char *var_value,
+						char *var_end, char *var_name);
+
+// src/parse/tokenize_utils_3.c
+int					get_operator_token_type(char *component);
+char				*handle_single_quoted(char *component);
+char				*handle_double_quoted(char *component, t_env *env,
+						int last_exit_status);
+char				*handle_variable_component(char *component, t_env *env,
+						int last_exit_status);
+char				*process_word_token(char *component, t_env *env,
+						int last_exit_status);
+
+// src/parse/parse_utils.c
+void				handle_redir_out(t_command *cmd, t_token *tokens,
+						size_t *tkn_index);
+void				handle_append_out(t_command *cmd, t_token *tokens,
+						size_t *tkn_index);
+void				handle_redir_in(t_command *cmd, t_token *tokens,
+						size_t *tkn_index);
+void				handle_heredoc(t_command *cmd, t_token *tokens,
+						size_t *tkn_index);
+void				handle_token(t_command *cmd, t_token *tokens,
+						size_t *tkn_index, size_t *arg_index);
+
+// src/parse/parse_utils_2.c
+void				init_command(t_command *command);
+size_t				count_args(t_token *tokens, size_t index);
+void				free_commands(t_command *commands, size_t count);
+void				fill_command_fields(t_command *cmd, t_token *tokens,
+						size_t *tkn_index);
 
 // Define the global variable for signal interruption
 extern int			g_signal_interrupted;
