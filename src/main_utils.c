@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main_utils.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dmalasek <dmalasek@student.42.fr>          +#+  +:+       +#+        */
+/*   By: tklaus <tklaus@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/02 12:41:20 by dmalasek          #+#    #+#             */
-/*   Updated: 2025/08/02 12:42:16 by dmalasek         ###   ########.fr       */
+/*   Updated: 2025/08/02 17:33:28 by tklaus           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,13 +25,14 @@ char	*get_input(void)
 {
 	char	*input;
 
-	g_signal_interrupted = 0;
 	input = readline("minishell ➜ ");
+	//printf("input: %s\n", input);
 	if (input == NULL)
 	{
 		if (g_signal_interrupted)
 		{
 			g_signal_interrupted = 0;
+			//printf("signal set to 0\n");
 			return (NULL);
 		}
 		write(STDOUT_FILENO, "exit\n", 5);
@@ -39,6 +40,7 @@ char	*get_input(void)
 	}
 	if (input[0] == '\0')
 	{
+		//printf("marker\n");
 		free(input);
 		return (NULL);
 	}

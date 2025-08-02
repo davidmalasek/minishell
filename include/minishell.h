@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dmalasek <dmalasek@student.42.fr>          +#+  +:+       +#+        */
+/*   By: tklaus <tklaus@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/02 14:39:37 by dmalasek          #+#    #+#             */
-/*   Updated: 2025/08/02 14:44:54 by dmalasek         ###   ########.fr       */
+/*   Updated: 2025/08/02 16:34:50 by tklaus           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,8 @@ int					add_env_node(t_env **head, char *key, char *value,
 char				*ft_strjoin3(char const *s1, char const *s2,
 						char const *s3);
 int					setup_signal_handlers(void);
+void	sigint_handler_child(int signo);
+void	sigint_handler(int signo);
 
 /* PARSING */
 typedef struct s_token

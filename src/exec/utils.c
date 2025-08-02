@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dmalasek <dmalasek@student.42.fr>          +#+  +:+       +#+        */
+/*   By: tklaus <tklaus@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/06 12:07:52 by tomasklaus        #+#    #+#             */
-/*   Updated: 2025/08/01 20:47:16 by dmalasek         ###   ########.fr       */
+/*   Updated: 2025/08/02 17:48:37 by tklaus           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,6 +66,15 @@ char	*resolve_path(char *command, t_env *env)
 	int		i;
 	char	*full_path;
 
+	if (!command)
+		return (NULL);
+	if (ft_strchr(command, '/'))
+	{
+		if (access(command, X_OK) == 0)
+			return (ft_strdup(command));
+		else
+			return (NULL);
+	}
 	path = get_path_from_env(env);
 	if (!path)
 		return (NULL);

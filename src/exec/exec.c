@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dmalasek <dmalasek@student.42.fr>          +#+  +:+       +#+        */
+/*   By: tklaus <tklaus@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/22 12:27:04 by tomasklaus        #+#    #+#             */
-/*   Updated: 2025/08/02 14:48:05 by dmalasek         ###   ########.fr       */
+/*   Updated: 2025/08/02 17:03:11 by tklaus           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,7 @@ static void	exec_child_process(t_command *command, t_env *env, int *status,
 	char	**envp;
 	char	*resolved_path;
 
-	signal(SIGINT, SIG_DFL);
+	signal(SIGINT, sigint_handler_child);
 	signal(SIGQUIT, SIG_DFL);
 	pipe_setup(command, &pipes[2], &pipes[0]);
 	redir_setup(command);
@@ -128,6 +128,7 @@ int	exec(t_command *command_list, t_env *env, int *status)
 			command_list++;
 			continue ;
 		}
+		signal(SIGINT,SIG_IGN);
 		if (command_list->pipe_to_next)
 			pipe(&pipes[2]);
 		pid = fork();
@@ -137,5 +138,7 @@ int	exec(t_command *command_list, t_env *env, int *status)
 			exec_parent_process(command_list, status, pipes);
 		command_list++;
 	}
+	signal(SIGINT,sigint_handler);
+	signal(SIGQUIT,SIG_DFL);
 	return (SUCCESS);
 }

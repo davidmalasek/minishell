@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   export.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dmalasek <dmalasek@student.42.fr>          +#+  +:+       +#+        */
+/*   By: tklaus <tklaus@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/04 20:57:23 by tomasklaus        #+#    #+#             */
-/*   Updated: 2025/08/02 11:42:39 by dmalasek         ###   ########.fr       */
+/*   Updated: 2025/08/02 17:54:20 by tklaus           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,6 +56,7 @@ static int	export_one(char *arg, t_env *env)
 	char	*key;
 	char	*value;
 	int		status;
+	char	*clean_value;
 
 	equal = ft_strchr(arg, '=');
 	if (!equal)
@@ -65,9 +66,11 @@ static int	export_one(char *arg, t_env *env)
 	}
 	key = ft_substr(arg, 0, equal - arg);
 	value = ft_strdup(equal + 1);
-	status = change_arg(key, value, env);
+	clean_value = remove_quotes(value);
+	status = change_arg(key, clean_value, env);
 	free(key);
 	free(value);
+	free(clean_value);
 	return (status);
 }
 

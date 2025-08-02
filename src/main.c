@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dmalasek <dmalasek@student.42.fr>          +#+  +:+       +#+        */
+/*   By: tklaus <tklaus@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 15:30:36 by dmalasek          #+#    #+#             */
-/*   Updated: 2025/08/02 12:42:20 by dmalasek         ###   ########.fr       */
+/*   Updated: 2025/08/02 18:01:20 by tklaus           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,7 @@ void	execute_and_cleanup(char *input, t_env *env, int *status)
 		free(input);
 		return ;
 	}
-	// print_command(command_list);
+	print_command(command_list);
 	exec(command_list, env, status);
 	cleanup_commands(command_list);
 	free(input);
