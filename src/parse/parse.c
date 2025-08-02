@@ -6,7 +6,7 @@
 /*   By: dmalasek <dmalasek@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/22 11:57:02 by dmalasek          #+#    #+#             */
-/*   Updated: 2025/08/02 14:41:34 by dmalasek         ###   ########.fr       */
+/*   Updated: 2025/08/02 18:04:19 by dmalasek         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,8 @@ void	handle_pipe(t_command *cmds, t_token *tokens, size_t *cmd_index,
 {
 	if (tokens[*tkn_index].type == PIPE)
 	{
-		cmds[*cmd_index].pipe_to_next = 1;
+		if (*cmd_index > 0)
+			cmds[*cmd_index - 1].pipe_to_next = 1;
 		(*tkn_index)++;
 	}
 }
