@@ -6,7 +6,7 @@
 /*   By: dmalasek <dmalasek@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 00:00:00 by tomasklaus        #+#    #+#             */
-/*   Updated: 2025/08/01 21:02:24 by dmalasek         ###   ########.fr       */
+/*   Updated: 2025/08/02 14:41:28 by dmalasek         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,6 +56,22 @@ void	cleanup_commands(t_command *command_list)
 		i++;
 	}
 	free(command_list);
+}
+
+void	cleanup_tokens(t_token *tokens)
+{
+	size_t	i;
+
+	if (!tokens)
+		return ;
+	i = 0;
+	while (tokens[i].type != -1)
+	{
+		if (tokens[i].value)
+			free(tokens[i].value);
+		i++;
+	}
+	free(tokens);
 }
 
 void	cleanup_shell(t_command *command_list, t_env *env)

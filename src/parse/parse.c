@@ -6,7 +6,7 @@
 /*   By: dmalasek <dmalasek@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/22 11:57:02 by dmalasek          #+#    #+#             */
-/*   Updated: 2025/08/02 12:37:47 by dmalasek         ###   ########.fr       */
+/*   Updated: 2025/08/02 14:41:34 by dmalasek         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,13 +60,15 @@ t_command	*process_all_commands(t_command *cmds, t_token *tokens,
 		cmds[cmd_index].has_quotes = has_quotes;
 		ret = process_command(cmds, tokens, &cmd_index, &tkn_index);
 		if (ret == 0)
-			return (free_commands(cmds, cmd_index), free(tokens), NULL);
+			return (free_commands(cmds, cmd_index), cleanup_tokens(tokens),
+				NULL);
 		if (ret == -1)
 			return (printf("minishell: syntax error near unexpected token\n"),
-				free_commands(cmds, cmd_index + 1), free(tokens), NULL);
+				free_commands(cmds, cmd_index + 1), cleanup_tokens(tokens),
+				NULL);
 		handle_pipe(cmds, tokens, &cmd_index, &tkn_index);
 	}
-	return (cmds[cmd_index].args = NULL, free(tokens), cmds);
+	return (cmds[cmd_index].args = NULL, cleanup_tokens(tokens), cmds);
 }
 
 t_command	*parse(char *input, t_env *env, int last_exit_status)

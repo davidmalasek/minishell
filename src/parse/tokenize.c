@@ -6,7 +6,7 @@
 /*   By: dmalasek <dmalasek@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/24 13:43:43 by davidmalase       #+#    #+#             */
-/*   Updated: 2025/08/02 12:05:41 by dmalasek         ###   ########.fr       */
+/*   Updated: 2025/08/02 14:50:11 by dmalasek         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,6 +67,7 @@ t_token	process_token(char *component, t_env *env, int last_exit_status)
 	if (operator_type != -1)
 	{
 		token.type = operator_type;
+		token.value = NULL;
 		return (token);
 	}
 	token.value = process_word_token(component, env, last_exit_status);

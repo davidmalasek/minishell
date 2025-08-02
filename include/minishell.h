@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: dmalasek <dmalasek@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2025/08/02 12:43:01 by dmalasek         ###   ########.fr       */
+/*   Created: 2025/08/02 14:39:37 by dmalasek          #+#    #+#             */
+/*   Updated: 2025/08/02 14:44:54 by dmalasek         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 # include <limits.h>
 # include <readline/history.h>
 # include <readline/readline.h>
+# include <signal.h>
 # include <stdio.h>
 # include <stdlib.h>
 # include <sys/types.h>
@@ -113,6 +114,7 @@ int					is_parent_builtin(t_command *command);
 int					pipe_setup(t_command *command, int pipe_fd[2],
 						int prev_pipe[2]);
 int					is_builtin(char *str);
+void				free_str_array(char **arr);
 
 // src/builtins/
 int					ft_cd(char **args, t_env *env);
@@ -131,6 +133,7 @@ int					validate_args(char **args, char *command_name, int max_args,
 void				cleanup_env(t_env *env);
 void				cleanup_commands(t_command *command_list);
 void				cleanup_shell(t_command *command_list, t_env *env);
+void				cleanup_tokens(t_token *tokens);
 
 // src/parse/preprocess_utils.c
 char				*get_token(const char **cursor, char delimiter,

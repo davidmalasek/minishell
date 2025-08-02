@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tomasklaus <tomasklaus@student.42.fr>      +#+  +:+       +#+        */
+/*   By: dmalasek <dmalasek@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/04 20:57:27 by tomasklaus        #+#    #+#             */
-/*   Updated: 2025/07/30 22:35:50 by tomasklaus       ###   ########.fr       */
+/*   Updated: 2025/08/02 14:43:13 by dmalasek         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,5 +33,6 @@ int	ft_env(char **args, t_env *env)
 		return (ERROR);
 	envp = env_list_to_array(env);
 	print_env(envp);
+	free_str_array(envp);
 	return (SUCCESS);
 }
