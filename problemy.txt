@@ -1,0 +1,56 @@
+cat << EOF | wc
+
+echo test > > file
+
+echo > > >, ale i echo > (segfault + leaks)
+
+echo > > > > projdou
+
+echo > > > > > segfaultuje
+
+echo | | (seg fault)
+
+segfault echo < n | echo hey
+
+cat << EOF (then Ctrl+C) (leak)
+
+minishell ➜ export a=echo
+minishell ➜ "$a" test | ls (leak)
+
+cat | cat | cat | echo done (leak)
+
+export ABC by melo projit (nevypsat error, ale do env se nepropise)
+
+export = by melo hodit error, ale nam nehodi error
+
+export 1ABC=val by nemelo projit, melo by hodit error
+
+export ab-c=val by nemelo projit, melo by hodit error
+
+echo > > > > by melo vratit 2, ne 0 v $?
+
+echo | | by melo vratit 2
+
+echo "abc" > by melo dat syntax error ne segfault
+
+
+------------------------------------
+
+VETSINA HAZI NECO TAKOVYHO:
+==308026== HEAP SUMMARY:
+==308026==     in use at exit: 212,841 bytes in 440 blocks
+==308026==   total heap usage: 1,141 allocs, 701 frees, 243,199 bytes allocated
+==308026== 
+==308026== 5 bytes in 1 blocks are definitely lost in loss record 5 of 80
+==308026==    at 0x4848899: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==308026==    by 0x405A30: ft_strdup (in /home/dmalasek/Documents/minishell/minishell)
+==308026==    by 0x404D9D: handle_token (in /home/dmalasek/Documents/minishell/minishell)
+==308026==    by 0x4050AD: fill_command_fields (in /home/dmalasek/Documents/minishell/minishell)
+==308026==    by 0x4014DB: process_command (in /home/dmalasek/Documents/minishell/minishell)
+==308026==    by 0x401604: process_all_commands (in /home/dmalasek/Documents/minishell/minishell)
+==308026==    by 0x40174D: parse (in /home/dmalasek/Documents/minishell/minishell)
+==308026==    by 0x401366: execute_and_cleanup (in /home/dmalasek/Documents/minishell/minishell)
+==308026==    by 0x40132C: main_loop (in /home/dmalasek/Documents/minishell/minishell)
+==308026==    by 0x4013DF: main (in /home/dmalasek/Documents/minishell/minishell)
+
+
