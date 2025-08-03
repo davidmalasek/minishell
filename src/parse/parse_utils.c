@@ -6,7 +6,7 @@
 /*   By: dmalasek <dmalasek@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/02 12:23:39 by dmalasek          #+#    #+#             */
-/*   Updated: 2025/08/03 17:52:39 by dmalasek         ###   ########.fr       */
+/*   Updated: 2025/08/03 18:46:04 by dmalasek         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,8 +27,11 @@ int	handle_redir_out(t_command *cmd, t_token *tokens, size_t *tkn_index)
 	}
 	else
 	{
-		printf("minishell: syntax error near unexpected token '%s'\n",
-			tokens[*tkn_index].value ? tokens[*tkn_index].value : ">");
+		if (tokens[*tkn_index].value)
+			printf("minishell: syntax error near unexpected token '%s'\n",
+				tokens[*tkn_index].value);
+		else
+			printf("minishell: syntax error near unexpected token '>'\n");
 		return (ERROR);
 	}
 }
@@ -49,8 +52,11 @@ int	handle_append_out(t_command *cmd, t_token *tokens, size_t *tkn_index)
 	}
 	else
 	{
-		printf("minishell: syntax error near unexpected token '%s'\n",
-			tokens[*tkn_index].value ? tokens[*tkn_index].value : ">>");
+		if (tokens[*tkn_index].value)
+			printf("minishell: syntax error near unexpected token '%s'\n",
+				tokens[*tkn_index].value);
+		else
+			printf("minishell: syntax error near unexpected token '>>'\n");
 		return (ERROR);
 	}
 }
@@ -70,8 +76,11 @@ int	handle_redir_in(t_command *cmd, t_token *tokens, size_t *tkn_index)
 	}
 	else
 	{
-		printf("minishell: syntax error near unexpected token '%s'\n",
-			tokens[*tkn_index].value ? tokens[*tkn_index].value : "<");
+		if (tokens[*tkn_index].value)
+			printf("minishell: syntax error near unexpected token '%s'\n",
+				tokens[*tkn_index].value);
+		else
+			printf("minishell: syntax error near unexpected token '<'\n");
 		return (ERROR);
 	}
 }
@@ -92,8 +101,11 @@ int	handle_heredoc(t_command *cmd, t_token *tokens, size_t *tkn_index)
 	}
 	else
 	{
-		printf("minishell: syntax error near unexpected token '%s'\n",
-			tokens[*tkn_index].value ? tokens[*tkn_index].value : "<<");
+		if (tokens[*tkn_index].value)
+			printf("minishell: syntax error near unexpected token '%s'\n",
+				tokens[*tkn_index].value);
+		else
+			printf("minishell: syntax error near unexpected token '<<'\n");
 		cmd->heredoc_delim = NULL;
 		return (ERROR);
 	}

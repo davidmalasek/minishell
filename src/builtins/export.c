@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   export.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tklaus <tklaus@student.42.fr>              +#+  +:+       +#+        */
+/*   By: dmalasek <dmalasek@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/04 20:57:23 by tomasklaus        #+#    #+#             */
-/*   Updated: 2025/08/02 17:54:20 by tklaus           ###   ########.fr       */
+/*   Updated: 2025/08/03 18:49:47 by dmalasek         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,24 @@ int	change_arg(char *new_key, char *new_value, t_env *env)
 	return (new_arg(new_key, new_value, env));
 }
 
+static int	is_valid_identifier(char *key)
+{
+	int	i;
+
+	if (!key || key[0] == '\0')
+		return (0);
+	if (!(ft_isalpha(key[0]) || key[0] == '_'))
+		return (0);
+	i = 1;
+	while (key[i])
+	{
+		if (!(ft_isalnum(key[i]) || key[i] == '_'))
+			return (0);
+		i++;
+	}
+	return (1);
+}
+
 static int	export_one(char *arg, t_env *env)
 {
 	char	*equal;
@@ -61,33 +79,38 @@ static int	export_one(char *arg, t_env *env)
 	equal = ft_strchr(arg, '=');
 	if (!equal)
 	{
-		ft_putstr_fd("export: invalid argument\n", 2);
-		return (ERROR);
+		if (is_valid_identifier(arg))
+			return (SUCCESS);
+		return (printf("export: invalid identifier: %s\n", arg), ERROR);
 	}
+	if (equal == arg)
+		return (printf("export: invalid identifier: %s\n", arg), ERROR);
 	key = ft_substr(arg, 0, equal - arg);
+	if (!is_valid_identifier(key))
+		return (printf("export: invalid identifier: %s\n", arg), free(key),
+			ERROR);
 	value = ft_strdup(equal + 1);
 	clean_value = remove_quotes(value);
 	status = change_arg(key, clean_value, env);
-	free(key);
-	free(value);
-	free(clean_value);
-	return (status);
+	return (free(key), free(value), free(clean_value), status);
 }
 
 int	ft_export(char **args, t_env *env)
 {
 	int	i;
 	int	status;
+	int	overall_status;
 
 	if (!args[1])
 		return (ft_env(args, env));
 	i = 1;
+	overall_status = SUCCESS;
 	while (args[i])
 	{
 		status = export_one(args[i], env);
 		if (status == ERROR)
-			return (ERROR);
+			overall_status = ERROR;
 		i++;
 	}
-	return (SUCCESS);
+	return (overall_status);
 }

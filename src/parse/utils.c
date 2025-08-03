@@ -6,7 +6,7 @@
 /*   By: dmalasek <dmalasek@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/22 11:57:02 by dmalasek          #+#    #+#             */
-/*   Updated: 2025/08/02 11:45:23 by dmalasek         ###   ########.fr       */
+/*   Updated: 2025/08/03 18:29:47 by dmalasek         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,12 +50,6 @@ size_t	get_array_length(char **array)
 		len++;
 	}
 	return (len);
-}
-
-int	ft_isalnum(int c)
-{
-	return ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0'
-			&& c <= '9'));
 }
 
 size_t	operator_token_length(const char *start, char *quote_char_out)
