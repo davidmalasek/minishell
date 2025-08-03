@@ -6,7 +6,7 @@
 /*   By: dmalasek <dmalasek@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/04 20:57:23 by tomasklaus        #+#    #+#             */
-/*   Updated: 2025/08/03 18:40:47 by dmalasek         ###   ########.fr       */
+/*   Updated: 2025/08/03 18:49:47 by dmalasek         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,28 +81,18 @@ static int	export_one(char *arg, t_env *env)
 	{
 		if (is_valid_identifier(arg))
 			return (SUCCESS);
-		printf("export: invalid identifier: %s\n", arg);
-		return (ERROR);
+		return (printf("export: invalid identifier: %s\n", arg), ERROR);
 	}
 	if (equal == arg)
-	{
-		printf("export: invalid identifier: %s\n", arg);
-		return (ERROR);
-	}
+		return (printf("export: invalid identifier: %s\n", arg), ERROR);
 	key = ft_substr(arg, 0, equal - arg);
 	if (!is_valid_identifier(key))
-	{
-		printf("export: invalid identifier: %s\n", arg);
-		free(key);
-		return (ERROR);
-	}
+		return (printf("export: invalid identifier: %s\n", arg), free(key),
+			ERROR);
 	value = ft_strdup(equal + 1);
 	clean_value = remove_quotes(value);
 	status = change_arg(key, clean_value, env);
-	free(key);
-	free(value);
-	free(clean_value);
-	return (status);
+	return (free(key), free(value), free(clean_value), status);
 }
 
 int	ft_export(char **args, t_env *env)
