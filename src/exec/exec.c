@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dmalasek <dmalasek@student.42.fr>          +#+  +:+       +#+        */
+/*   By: tklaus <tklaus@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/22 12:27:04 by tomasklaus        #+#    #+#             */
-/*   Updated: 2025/08/03 15:23:09 by dmalasek         ###   ########.fr       */
+/*   Updated: 2025/08/03 15:29:56 by tklaus           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,20 +67,17 @@ static void	exec_child_process(t_command *command, t_env *env, int *status,
 	{
 		*status = exec_builtin(*command, env, *status);
 		free_str_array(envp);
+		exit(*status);
 	}
-	else
+	resolved_path = resolve_path(command->args[0], env);
+	if (resolved_path)
 	{
-		resolved_path = resolve_path(command->args[0], env);
-		if (resolved_path)
-		{
-			execve(resolved_path, command->args, envp);
-			free(resolved_path);
-		}
-		printf("minishell: command not found: %s\n", command->args[0]);
-		free_str_array(envp);
-		exit(EXIT_FAILURE);
+		execve(resolved_path, command->args, envp);
+		free(resolved_path);
 	}
-	exit(*status);
+	printf("minishell: command not found: %s\n", command->args[0]);
+	free_str_array(envp);
+	exit(EXIT_FAILURE);
 }
 
 static void	exec_parent_process(t_command *command, int *status, int pipes[4])

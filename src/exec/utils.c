@@ -6,7 +6,7 @@
 /*   By: tklaus <tklaus@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/06 12:07:52 by tomasklaus        #+#    #+#             */
-/*   Updated: 2025/08/02 17:48:37 by tklaus           ###   ########.fr       */
+/*   Updated: 2025/08/03 15:34:16 by tklaus           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,14 +66,11 @@ char	*resolve_path(char *command, t_env *env)
 	int		i;
 	char	*full_path;
 
-	if (!command)
-		return (NULL);
 	if (ft_strchr(command, '/'))
 	{
 		if (access(command, X_OK) == 0)
 			return (ft_strdup(command));
-		else
-			return (NULL);
+		return (NULL);
 	}
 	path = get_path_from_env(env);
 	if (!path)
@@ -82,18 +79,13 @@ char	*resolve_path(char *command, t_env *env)
 	if (!paths)
 		return (NULL);
 	i = 0;
-	while (paths[i])
+	full_path = NULL;
+	while (paths[i] && !full_path)
 	{
 		full_path = join_and_check_access(paths[i], command);
-		if (full_path)
-		{
-			free_str_array(paths);
-			return (full_path);
-		}
 		i++;
 	}
-	free_str_array(paths);
-	return (NULL);
+	return (free_str_array(paths), full_path);
 }
 
 int	is_builtin(char *str)
