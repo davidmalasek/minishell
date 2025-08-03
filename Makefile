@@ -30,7 +30,8 @@ SRC = src/main.c \
 	src/parse/parse_utils.c \
 	src/parse/parse_utils_2.c \
 	src/cleanup/cleanup.c \
-	src/main_utils.c
+src/main_utils.c \
+src/main_utils2.c
 	
 
 # Output

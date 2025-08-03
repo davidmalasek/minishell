@@ -6,7 +6,7 @@
 /*   By: tklaus <tklaus@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/02 14:39:37 by dmalasek          #+#    #+#             */
-/*   Updated: 2025/08/03 18:54:15 by tklaus           ###   ########.fr       */
+/*   Updated: 2025/08/03 19:13:15 by tklaus           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,7 @@
 # define ECHON 17664
 
 // environment structure for env linked list
+
 typedef struct s_env
 {
 	char			*key;
@@ -80,6 +81,8 @@ char				*get_input(void);
 int					validate_input(char *input);
 int					handle_empty_or_signal(char *input, int *status);
 int					handle_invalid_input(char *input, int *status);
+
+int					validate_input(char *input);
 
 // src/parse/utils.c
 size_t				get_array_length(char **array);

@@ -1,4 +1,4 @@
-cat << EOF | wc
+cat << EOF | wc ✅
 
 echo test > > file by melo hodit error? ✅
 
@@ -29,7 +29,7 @@ export ab-c=val by nemelo projit, melo by hodit error ✅
 
 echo > > > > by melo vratit 2, ne 0 v $?
 
-echo | | by melo vratit 2 
+echo | | by melo vratit 2 ✅
 
 echo "abc" > by melo dat syntax error ne segfault ✅
 
