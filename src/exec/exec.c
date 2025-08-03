@@ -6,7 +6,7 @@
 /*   By: tklaus <tklaus@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/22 12:27:04 by tomasklaus        #+#    #+#             */
-/*   Updated: 2025/08/03 16:21:18 by tklaus           ###   ########.fr       */
+/*   Updated: 2025/08/03 18:20:27 by tklaus           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,8 +60,8 @@ static void	exec_child_process(t_command *command, t_env *env, int *status,
 
 	signal(SIGINT, sigint_handler_child);
 	signal(SIGQUIT, SIG_DFL);
-	pipe_setup(command, &pipes[2], &pipes[0]);
 	redir_setup(command);
+	pipe_setup(command, &pipes[2], &pipes[0]);
 	envp = env_list_to_array(env);
 	if (is_builtin(command->args[0]))
 	{
