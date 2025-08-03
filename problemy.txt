@@ -27,10 +27,10 @@ export 1ABC=val by nemelo projit, melo by hodit error ✅
 
 export ab-c=val by nemelo projit, melo by hodit error ✅
 
-echo > > > > by melo vratit 2, ne 0 v $?
+echo > > > > by melo vratit 2, ne 0 v $? ✅
 
 echo | | by melo vratit 2 ✅
 
 echo "abc" > by melo dat syntax error ne segfault ✅
 
-
+ls -n | ca    by melo vratit 127 a ne 1

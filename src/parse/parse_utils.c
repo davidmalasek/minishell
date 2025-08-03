@@ -6,18 +6,26 @@
 /*   By: dmalasek <dmalasek@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/02 12:23:39 by dmalasek          #+#    #+#             */
-/*   Updated: 2025/08/03 18:46:04 by dmalasek         ###   ########.fr       */
+/*   Updated: 2025/08/03 19:43:23 by dmalasek         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
+
+static void	free_and_set(char **target, char *new_value)
+{
+	if (*target)
+		free(*target);
+	*target = ft_strdup(new_value);
+}
 
 int	handle_redir_out(t_command *cmd, t_token *tokens, size_t *tkn_index)
 {
 	(*tkn_index)++;
 	if (tokens[*tkn_index].type == WORD && tokens[*tkn_index].value)
 	{
-		cmd->outfile = ft_strdup(tokens[*tkn_index].value);
+		free_and_set(&cmd->outfile, tokens[*tkn_index].value);
+		cmd->append = 0;
 		return (SUCCESS);
 	}
 	else if (tokens[*tkn_index].type == -1)
@@ -41,7 +49,7 @@ int	handle_append_out(t_command *cmd, t_token *tokens, size_t *tkn_index)
 	(*tkn_index)++;
 	if (tokens[*tkn_index].type == WORD && tokens[*tkn_index].value)
 	{
-		cmd->outfile = ft_strdup(tokens[*tkn_index].value);
+		free_and_set(&cmd->outfile, tokens[*tkn_index].value);
 		cmd->append = 1;
 		return (SUCCESS);
 	}
@@ -66,7 +74,7 @@ int	handle_redir_in(t_command *cmd, t_token *tokens, size_t *tkn_index)
 	(*tkn_index)++;
 	if (tokens[*tkn_index].type == WORD && tokens[*tkn_index].value)
 	{
-		cmd->infile = ft_strdup(tokens[*tkn_index].value);
+		free_and_set(&cmd->infile, tokens[*tkn_index].value);
 		return (SUCCESS);
 	}
 	else if (tokens[*tkn_index].type == -1)
@@ -90,7 +98,7 @@ int	handle_heredoc(t_command *cmd, t_token *tokens, size_t *tkn_index)
 	(*tkn_index)++;
 	if (tokens[*tkn_index].type == WORD && tokens[*tkn_index].value)
 	{
-		cmd->heredoc_delim = ft_strdup(tokens[*tkn_index].value);
+		free_and_set(&cmd->heredoc_delim, tokens[*tkn_index].value);
 		return (SUCCESS);
 	}
 	else if (tokens[*tkn_index].type == -1)
