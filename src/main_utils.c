@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main_utils.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dmalasek <dmalasek@student.42.fr>          +#+  +:+       +#+        */
+/*   By: tklaus <tklaus@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/02 12:41:20 by dmalasek          #+#    #+#             */
-/*   Updated: 2025/08/03 18:03:22 by dmalasek         ###   ########.fr       */
+/*   Updated: 2025/08/03 18:53:39 by tklaus           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,16 +101,20 @@ int	validate_input(char *input)
 int	handle_empty_or_signal(char *input, int *status)
 {
 	if (g_signal_interrupted)
+	{
 		*status = 130;
+		g_signal_interrupted = 0; //nejdriv otestovat, mozna bude potreba vymazat
+	}
 	if (!input)
 		return (1);
 	return (0);
 }
 
-int	handle_invalid_input(char *input)
+int	handle_invalid_input(char *input, int *status)
 {
 	if (!validate_input(input))
 	{
+		*status = 2;
 		free(input);
 		return (1);
 	}

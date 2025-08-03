@@ -6,7 +6,7 @@
 /*   By: tklaus <tklaus@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 15:30:36 by dmalasek          #+#    #+#             */
-/*   Updated: 2025/08/03 16:23:14 by tklaus           ###   ########.fr       */
+/*   Updated: 2025/08/03 18:45:27 by tklaus           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,7 +90,7 @@ int	main_loop(t_env *env)
 		input = get_input();
 		if (handle_empty_or_signal(input, &status))
 			continue ;
-		if (handle_invalid_input(input))
+		if (handle_invalid_input(input, &status))
 			continue ;
 		g_signal_interrupted = 0;
 		if (status == ECHON)

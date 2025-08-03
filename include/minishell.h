@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dmalasek <dmalasek@student.42.fr>          +#+  +:+       +#+        */
+/*   By: tklaus <tklaus@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/02 14:39:37 by dmalasek          #+#    #+#             */
-/*   Updated: 2025/08/03 17:54:13 by dmalasek         ###   ########.fr       */
+/*   Updated: 2025/08/03 18:54:15 by tklaus           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,7 +79,7 @@ t_env				*initialize_shell(char **envp);
 char				*get_input(void);
 int					validate_input(char *input);
 int					handle_empty_or_signal(char *input, int *status);
-int					handle_invalid_input(char *input);
+int					handle_invalid_input(char *input, int *status);
 
 // src/parse/utils.c
 size_t				get_array_length(char **array);
