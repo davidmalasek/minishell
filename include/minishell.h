@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dmalasek <dmalasek@student.42.fr>          +#+  +:+       +#+        */
+/*   By: tklaus <tklaus@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/02 14:39:37 by dmalasek          #+#    #+#             */
-/*   Updated: 2025/08/03 15:18:07 by dmalasek         ###   ########.fr       */
+/*   Updated: 2025/08/03 16:12:08 by tklaus           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,7 +78,7 @@ typedef struct s_command
 t_env				*initialize_shell(char **envp);
 char				*get_input(void);
 int					validate_input(char *input);
-int					handle_empty_or_signal(char *input);
+int					handle_empty_or_signal(char *input, int *status);
 int					handle_invalid_input(char *input);
 
 // src/parse/utils.c

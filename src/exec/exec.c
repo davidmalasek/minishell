@@ -6,7 +6,7 @@
 /*   By: tklaus <tklaus@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/22 12:27:04 by tomasklaus        #+#    #+#             */
-/*   Updated: 2025/08/03 15:29:56 by tklaus           ###   ########.fr       */
+/*   Updated: 2025/08/03 16:21:18 by tklaus           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,6 +82,8 @@ static void	exec_child_process(t_command *command, t_env *env, int *status,
 
 static void	exec_parent_process(t_command *command, int *status, int pipes[4])
 {
+	int	wstatus;
+
 	if (pipes[0] > 0)
 		close(pipes[0]);
 	if (command->pipe_to_next)
@@ -89,7 +91,12 @@ static void	exec_parent_process(t_command *command, int *status, int pipes[4])
 		close(pipes[3]);
 		pipes[0] = pipes[2];
 	}
-	waitpid(-1, status, 0);
+	wstatus = 0;
+	waitpid(-1, &wstatus, 0);
+	if (WIFSIGNALED(wstatus))
+		*status = 128 + WTERMSIG(wstatus);
+	else if (WIFEXITED(wstatus))
+		*status = WEXITSTATUS(wstatus);
 }
 /* pipes[0]=prev_pipe_read, pipes[1]=prev_pipe_write,
 		pipes[2]=current_pipe_read, pipes[3]=current_pipe_write */

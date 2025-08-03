@@ -6,7 +6,7 @@
 /*   By: tklaus <tklaus@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 15:30:36 by dmalasek          #+#    #+#             */
-/*   Updated: 2025/08/03 15:41:31 by tklaus           ###   ########.fr       */
+/*   Updated: 2025/08/03 16:23:14 by tklaus           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,6 @@ static void	execute_and_cleanup(char *input, t_env *env, int *status)
 		free(input);
 		return ;
 	}
-	//g_signal_interrupted = 0;
 	exec(command_list, env, status);
 	cleanup_commands(command_list);
 	free(input);
@@ -89,7 +88,7 @@ int	main_loop(t_env *env)
 	while (1)
 	{
 		input = get_input();
-		if (handle_empty_or_signal(input))
+		if (handle_empty_or_signal(input, &status))
 			continue ;
 		if (handle_invalid_input(input))
 			continue ;
