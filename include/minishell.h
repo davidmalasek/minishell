@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tklaus <tklaus@student.42.fr>              +#+  +:+       +#+        */
+/*   By: dmalasek <dmalasek@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/02 14:39:37 by dmalasek          #+#    #+#             */
-/*   Updated: 2025/08/02 16:34:50 by tklaus           ###   ########.fr       */
+/*   Updated: 2025/08/03 15:18:07 by dmalasek         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,8 +53,8 @@ int					add_env_node(t_env **head, char *key, char *value,
 char				*ft_strjoin3(char const *s1, char const *s2,
 						char const *s3);
 int					setup_signal_handlers(void);
-void	sigint_handler_child(int signo);
-void	sigint_handler(int signo);
+void				sigint_handler_child(int signo);
+void				sigint_handler(int signo);
 
 /* PARSING */
 typedef struct s_token
@@ -193,6 +193,9 @@ size_t				count_args(t_token *tokens, size_t index);
 void				free_commands(t_command *commands, size_t count);
 void				fill_command_fields(t_command *cmd, t_token *tokens,
 						size_t *tkn_index);
+
+// src/exec/exec_utils.c
+void				setup_pipes(int pipes[4]);
 
 // Define the global variable for signal interruption
 extern int			g_signal_interrupted;

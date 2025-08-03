@@ -20,6 +20,7 @@ SRC = src/main.c \
 	src/env/sighandling.c \
 	src/env/utils.c \
 	src/exec/exec.c \
+	src/exec/exec_utils.c \
 	src/exec/utils.c \
 	src/exec/redir.c \
 	src/parse/preprocess_utils.c \
