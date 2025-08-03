@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main_utils.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tklaus <tklaus@student.42.fr>              +#+  +:+       +#+        */
+/*   By: dmalasek <dmalasek@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/02 12:41:20 by dmalasek          #+#    #+#             */
-/*   Updated: 2025/08/03 16:23:51 by tklaus           ###   ########.fr       */
+/*   Updated: 2025/08/03 18:03:22 by dmalasek         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,8 @@ int	validate_input(char *input)
 {
 	char	*trimmed;
 	int		len;
+	int		i;
+	int		pipe_found;
 
 	if (!input || input[0] == '\0')
 		return (0);
@@ -60,9 +62,37 @@ int	validate_input(char *input)
 			trimmed[0]);
 		return (0);
 	}
-	if ((trimmed[0] == '"' && len == 1) || (trimmed[0] == '\'' && len == 1))
+	if (trimmed[0] == '"' && len == 1)
 	{
 		printf("minishell: syntax error: unclosed quote\n");
+		return (0);
+	}
+	if (trimmed[0] == '\'' && len == 1)
+	{
+		printf("minishell: syntax error: unclosed quote\n");
+		return (0);
+	}
+	// Check for consecutive pipes or trailing pipes
+	i = 0;
+	pipe_found = 0;
+	while (i < len)
+	{
+		if (trimmed[i] == '|')
+		{
+			if (pipe_found)
+			{
+				printf("minishell: syntax error near unexpected token '|'\n");
+				return (0);
+			}
+			pipe_found = 1;
+		}
+		else if (trimmed[i] != ' ')
+			pipe_found = 0;
+		i++;
+	}
+	if (pipe_found)
+	{
+		printf("minishell: syntax error near unexpected token 'newline'\n");
 		return (0);
 	}
 	return (1);
