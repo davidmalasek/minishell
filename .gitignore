@@ -4,3 +4,4 @@
 *.o
 minishell
 minishell_tester
+libft.a
