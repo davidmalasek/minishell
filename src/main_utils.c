@@ -6,7 +6,7 @@
 /*   By: tklaus <tklaus@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/02 12:41:20 by dmalasek          #+#    #+#             */
-/*   Updated: 2025/08/03 19:14:46 by tklaus           ###   ########.fr       */
+/*   Updated: 2025/08/03 19:51:16 by tklaus           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,18 @@ char	*get_input(void)
 
 int	handle_empty_or_signal(char *input, int *status)
 {
+	if (input && input[0] != '\0')
+	{
+		int i = 0;
+		while (input[i] && (input[i] == ' ' || input[i] == '\t'))
+			i++;
+		if (input[i] == '\0')
+		{
+			*status = 0;
+			free(input);
+			return 1;
+		}
+	}
 	if (g_signal_interrupted)
 	{
 		*status = 130;

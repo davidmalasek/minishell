@@ -6,7 +6,7 @@
 /*   By: tklaus <tklaus@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 15:30:36 by dmalasek          #+#    #+#             */
-/*   Updated: 2025/08/03 19:02:10 by tklaus           ###   ########.fr       */
+/*   Updated: 2025/08/03 19:31:53 by tklaus           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,10 +68,10 @@ static void	execute_and_cleanup(char *input, t_env *env, int *status)
 {
 	t_command	*command_list;
 
-	command_list = parse(input, env, *status);
+	command_list = parse(input, env, status);
 	if (!command_list)
 	{
-		*status = 2;
+		//*status = 2;
 		free(input);
 		return ;
 	}

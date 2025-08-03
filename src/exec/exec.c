@@ -6,7 +6,7 @@
 /*   By: tklaus <tklaus@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/22 12:27:04 by tomasklaus        #+#    #+#             */
-/*   Updated: 2025/08/03 18:20:27 by tklaus           ###   ########.fr       */
+/*   Updated: 2025/08/03 19:55:58 by tklaus           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,7 +77,7 @@ static void	exec_child_process(t_command *command, t_env *env, int *status,
 	}
 	printf("minishell: command not found: %s\n", command->args[0]);
 	free_str_array(envp);
-	exit(EXIT_FAILURE);
+	exit(127);
 }
 
 static void	exec_parent_process(t_command *command, int *status, int pipes[4])

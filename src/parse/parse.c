@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dmalasek <dmalasek@student.42.fr>          +#+  +:+       +#+        */
+/*   By: tklaus <tklaus@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/22 11:57:02 by dmalasek          #+#    #+#             */
-/*   Updated: 2025/08/03 17:56:23 by dmalasek         ###   ########.fr       */
+/*   Updated: 2025/08/03 19:52:51 by tklaus           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,17 +72,34 @@ t_command	*process_all_commands(t_command *cmds, t_token *tokens,
 	return (cmds[cmd_index].args = NULL, cleanup_tokens(tokens), cmds);
 }
 
-t_command	*parse(char *input, t_env *env, int last_exit_status)
+t_command	*parse(char *input, t_env *env, int *last_exit_status)
 {
 	t_token		*tokens;
 	t_command	*cmds;
 	int			has_quotes;
+	/*int			i;
 
-	tokens = tokenize(input, env, last_exit_status, &has_quotes);
+	 i = 0;
+	while (input && input[i])
+	{
+		if (input[i] != ' ' && input[i] != '\t')
+			break ;
+		i++;
+	}
+	if (!input || input[i] == '\0')
+	{
+		*last_exit_status = 0;
+		return (NULL);
+	} */
+
+	tokens = tokenize(input, env, *last_exit_status, &has_quotes);
 	if (!tokens)
 		return (NULL);
 	cmds = malloc(sizeof(t_command) * (get_command_count(tokens) + 1));
 	if (!cmds)
 		return (free(tokens), NULL);
-	return (process_all_commands(cmds, tokens, has_quotes));
+	cmds = process_all_commands(cmds, tokens, has_quotes);
+	if (!cmds)
+		*last_exit_status = 2;
+	return (cmds);
 }

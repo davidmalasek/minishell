@@ -6,7 +6,7 @@
 /*   By: tklaus <tklaus@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/02 14:39:37 by dmalasek          #+#    #+#             */
-/*   Updated: 2025/08/03 19:13:15 by tklaus           ###   ########.fr       */
+/*   Updated: 2025/08/03 19:32:24 by tklaus           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,7 +100,7 @@ char				*expand_in_double_quotes(char *component, t_env *env,
 						int last_exit_status);
 
 // src/parse/parse.c
-t_command			*parse(char *input, t_env *env, int last_exit_status);
+t_command			*parse(char *input, t_env *env, int *last_exit_status);
 
 // src/parse/preprocess.c
 char				**custom_split(const char *input, char delimiter,
