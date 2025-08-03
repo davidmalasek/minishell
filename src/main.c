@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tklaus <tklaus@student.42.fr>              +#+  +:+       +#+        */
+/*   By: dmalasek <dmalasek@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 15:30:36 by dmalasek          #+#    #+#             */
-/*   Updated: 2025/08/02 18:01:20 by tklaus           ###   ########.fr       */
+/*   Updated: 2025/08/03 11:25:10 by dmalasek         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
 
-int		g_signal_interrupted = 0;
+int			g_signal_interrupted = 0;
 
 void	print_command(t_command *command_list)
 {
@@ -60,7 +60,7 @@ void	print_command(t_command *command_list)
 	}
 }
 
-void	execute_and_cleanup(char *input, t_env *env, int *status)
+static void	execute_and_cleanup(char *input, t_env *env, int *status)
 {
 	t_command	*command_list;
 
@@ -70,7 +70,8 @@ void	execute_and_cleanup(char *input, t_env *env, int *status)
 		free(input);
 		return ;
 	}
-	print_command(command_list);
+	g_signal_interrupted = 0;
+	// print_command(command_list);
 	exec(command_list, env, status);
 	cleanup_commands(command_list);
 	free(input);
@@ -85,6 +86,11 @@ int	main_loop(t_env *env)
 	while (1)
 	{
 		input = get_input();
+		if (g_signal_interrupted)
+		{
+			g_signal_interrupted = 0;
+			continue ;
+		}
 		if (handle_empty_or_signal(input))
 			continue ;
 		if (handle_invalid_input(input))
