@@ -1,23 +1,23 @@
 cat << EOF | wc
 
-echo test > > file
+echo test > > file by melo hodit error? ✅
 
-echo > > >, ale i echo > (segfault + leaks)
+echo > > >, ale i echo > (segfault + leaks) ✅
 
-echo > > > > projdou
+echo > > > > projdou ✅
 
-echo > > > > > segfaultuje
+echo > > > > > segfaultuje ✅
 
 echo | | (seg fault)
 
 segfault echo < n | echo hey
 
-cat << EOF (then Ctrl+C) (leak)
+cat << EOF (then Ctrl+C) (leak) ✅
 
-minishell ➜ export a=echo
-minishell ➜ "$a" test | ls (leak)
-
-cat | cat | cat | echo done (leak)
+minishell ➜ export a=echo ✅
+minishell ➜ "$a" test | ls (leak) ✅
+ 
+cat | cat | cat | echo done (leak) ✅
 
 export ABC by melo projit (nevypsat error, ale do env se nepropise)
 

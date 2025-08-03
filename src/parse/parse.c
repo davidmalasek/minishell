@@ -6,7 +6,7 @@
 /*   By: dmalasek <dmalasek@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/22 11:57:02 by dmalasek          #+#    #+#             */
-/*   Updated: 2025/08/02 18:04:19 by dmalasek         ###   ########.fr       */
+/*   Updated: 2025/08/03 17:56:23 by dmalasek         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,8 @@ int	process_command(t_command *cmds, t_token *tokens, size_t *cmd_index,
 	init_command(&cmds[*cmd_index]);
 	if (!alloc_command_args(&cmds[*cmd_index], tokens, *tkn_index))
 		return (0);
-	fill_command_fields(&cmds[*cmd_index], tokens, tkn_index);
+	if (fill_command_fields(&cmds[*cmd_index], tokens, tkn_index) == ERROR)
+		return (-1);
 	if (cmds[*cmd_index].args[0] == NULL)
 		return (-1);
 	(*cmd_index)++;
@@ -64,8 +65,7 @@ t_command	*process_all_commands(t_command *cmds, t_token *tokens,
 			return (free_commands(cmds, cmd_index), cleanup_tokens(tokens),
 				NULL);
 		if (ret == -1)
-			return (printf("minishell: syntax error near unexpected token\n"),
-				free_commands(cmds, cmd_index + 1), cleanup_tokens(tokens),
+			return (free_commands(cmds, cmd_index + 1), cleanup_tokens(tokens),
 				NULL);
 		handle_pipe(cmds, tokens, &cmd_index, &tkn_index);
 	}

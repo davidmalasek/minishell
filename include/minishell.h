@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tklaus <tklaus@student.42.fr>              +#+  +:+       +#+        */
+/*   By: dmalasek <dmalasek@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/02 14:39:37 by dmalasek          #+#    #+#             */
-/*   Updated: 2025/08/03 16:12:08 by tklaus           ###   ########.fr       */
+/*   Updated: 2025/08/03 17:54:13 by dmalasek         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -176,22 +176,22 @@ char				*process_word_token(char *component, t_env *env,
 						int last_exit_status);
 
 // src/parse/parse_utils.c
-void				handle_redir_out(t_command *cmd, t_token *tokens,
+int					handle_redir_out(t_command *cmd, t_token *tokens,
 						size_t *tkn_index);
-void				handle_append_out(t_command *cmd, t_token *tokens,
+int					handle_append_out(t_command *cmd, t_token *tokens,
 						size_t *tkn_index);
-void				handle_redir_in(t_command *cmd, t_token *tokens,
+int					handle_redir_in(t_command *cmd, t_token *tokens,
 						size_t *tkn_index);
-void				handle_heredoc(t_command *cmd, t_token *tokens,
+int					handle_heredoc(t_command *cmd, t_token *tokens,
 						size_t *tkn_index);
-void				handle_token(t_command *cmd, t_token *tokens,
+int					handle_token(t_command *cmd, t_token *tokens,
 						size_t *tkn_index, size_t *arg_index);
 
 // src/parse/parse_utils_2.c
 void				init_command(t_command *command);
 size_t				count_args(t_token *tokens, size_t index);
 void				free_commands(t_command *commands, size_t count);
-void				fill_command_fields(t_command *cmd, t_token *tokens,
+int					fill_command_fields(t_command *cmd, t_token *tokens,
 						size_t *tkn_index);
 
 // src/exec/exec_utils.c

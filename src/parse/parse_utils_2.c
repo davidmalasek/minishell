@@ -6,7 +6,7 @@
 /*   By: dmalasek <dmalasek@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/02 12:25:07 by dmalasek          #+#    #+#             */
-/*   Updated: 2025/08/03 17:08:25 by dmalasek         ###   ########.fr       */
+/*   Updated: 2025/08/03 18:00:13 by dmalasek         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 
 void	init_command(t_command *command)
 {
+	command->args = NULL;
 	command->infile = NULL;
 	command->outfile = NULL;
 	command->append = 0;
@@ -61,15 +62,22 @@ void	free_commands(t_command *commands, size_t count)
 	free(commands);
 }
 
-void	fill_command_fields(t_command *cmd, t_token *tokens, size_t *tkn_index)
+int	fill_command_fields(t_command *cmd, t_token *tokens, size_t *tkn_index)
 {
 	size_t	arg_index;
+	int		result;
 
 	arg_index = 0;
 	while (tokens[*tkn_index].type != PIPE && tokens[*tkn_index].type != -1)
 	{
-		handle_token(cmd, tokens, tkn_index, &arg_index);
+		result = handle_token(cmd, tokens, tkn_index, &arg_index);
+		if (result == ERROR)
+		{
+			cmd->args[arg_index] = NULL;
+			return (ERROR);
+		}
 		(*tkn_index)++;
 	}
 	cmd->args[arg_index] = NULL;
+	return (SUCCESS);
 }
