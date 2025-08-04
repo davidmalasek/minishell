@@ -6,7 +6,7 @@
 /*   By: dmalasek <dmalasek@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/04 20:57:57 by tomasklaus        #+#    #+#             */
-/*   Updated: 2025/08/02 11:41:39 by dmalasek         ###   ########.fr       */
+/*   Updated: 2025/08/04 09:32:12 by dmalasek         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,9 +58,6 @@ int	ft_echo(char **args)
 	flag = echo_flag_n(args, &start);
 	echo_print_args(args, start);
 	if (!flag)
-	{
 		ft_putchar_fd('\n', 1);
-		return (0);
-	}
-	return (69);
+	return (SUCCESS);
 }

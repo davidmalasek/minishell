@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tklaus <tklaus@student.42.fr>              +#+  +:+       +#+        */
+/*   By: dmalasek <dmalasek@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 15:30:36 by dmalasek          #+#    #+#             */
-/*   Updated: 2025/08/03 19:31:53 by tklaus           ###   ########.fr       */
+/*   Updated: 2025/08/04 09:25:32 by dmalasek         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,11 +94,6 @@ int	main_loop(t_env *env)
 		if (handle_invalid_input(input, &status))
 			continue ;
 		g_signal_interrupted = 0;
-		if (status == ECHON)
-		{
-			ft_putchar_fd('\n', 1);
-			status = 0;
-		}
 		execute_and_cleanup(input, env, &status);
 	}
 }

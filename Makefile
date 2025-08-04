@@ -56,7 +56,7 @@ $(LIBFT_LIB):
 	$(MAKE) -C $(LIBFT_DIR)
 
 # Rule to compile .c files into .o files inside the temporary directory
-$(OBJ_DIR)/%.o: src/%.c | $(OBJ_DIR)
+$(OBJ_DIR)/%.o: src/%.c include/minishell.h | $(OBJ_DIR)
 	@mkdir -p $(@D)
 	$(CC) $(CFLAGS) -c $< -o $@
 
