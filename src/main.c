@@ -6,7 +6,7 @@
 /*   By: tklaus <tklaus@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 15:30:36 by dmalasek          #+#    #+#             */
-/*   Updated: 2025/08/04 10:09:20 by tklaus           ###   ########.fr       */
+/*   Updated: 2025/08/04 11:56:25 by tklaus           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,6 +78,18 @@ static void	execute_and_cleanup(char *input, t_env *env, int *status)
 	cleanup_commands(command_list);
 	free(input);
 }
+/**
+ * Calls get_input() to read a line of input from the user.
+ * Checks if the input is empty or if a signal (such as Ctrl+C) was received
+ * using handle_empty_or_signal(). If so,updates status and continues to the
+ * next iteration without executing a command.
+ * Checks for invalid input (such as syntax errors)
+ * using handle_invalid_input().
+ * If invalid, updates status and continues to the next iteration.
+ * Executes the command and performs necessary
+ * cleanup using execute_and_cleanup(),
+ * passing the input, environment, and status pointer.
+ */
 
 int	main_loop(t_env *env)
 {

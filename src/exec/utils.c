@@ -6,7 +6,7 @@
 /*   By: tklaus <tklaus@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/06 12:07:52 by tomasklaus        #+#    #+#             */
-/*   Updated: 2025/08/03 15:34:16 by tklaus           ###   ########.fr       */
+/*   Updated: 2025/08/04 11:58:15 by tklaus           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,13 @@ void	free_str_array(char **arr)
 	free(arr);
 }
 
+/**
+ * Joins a directory path and a command name with a '/' separator,
+ * then checks if the resulting path is accessible and executable.
+ *
+ * @return Newly allocated string with the full path if accessible,
+ * NULL otherwise.
+ */
 char	*join_and_check_access(const char *dir, const char *command)
 {
 	char	*tmp;
@@ -59,6 +66,16 @@ char	*join_and_check_access(const char *dir, const char *command)
 	return (NULL);
 }
 
+/**
+ * Resolves the absolute path of a command using the environment's
+ * PATH variable.
+ * If the command contains a '/', checks if it is directly executable.
+ * Otherwise,
+ * splits the PATH variable and searches each directory for
+ * an executable file.
+ *
+ * @return Newly allocated string with the resolved path, or NULL if not found.
+ */
 char	*resolve_path(char *command, t_env *env)
 {
 	char	*path;

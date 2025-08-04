@@ -3,15 +3,21 @@
 /*                                                        :::      ::::::::   */
 /*   redir.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dmalasek <dmalasek@student.42.fr>          +#+  +:+       +#+        */
+/*   By: tklaus <tklaus@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/06 17:22:53 by tomasklaus        #+#    #+#             */
-/*   Updated: 2025/08/02 12:06:03 by dmalasek         ###   ########.fr       */
+/*   Updated: 2025/08/04 11:58:44 by tklaus           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
+/**
+ * Sets up the pipe file descriptors for the current command.
+ * If there is a previous pipe, duplicates its read end to STDIN and closes it.
+ * If the current command pipes to the next,
+ * duplicates the write end of the current pipe to STDOUT,
+ */
 int	pipe_setup(t_command *command, int pipe_fd[2], int prev_pipe[2])
 {
 	if (prev_pipe[0] > 0)
@@ -28,6 +34,9 @@ int	pipe_setup(t_command *command, int pipe_fd[2], int prev_pipe[2])
 	return (SUCCESS);
 }
 
+/**
+ * Redirects STDIN to read from the specified input file.
+ */
 int	input_redir(const char *infile)
 {
 	int	fd;
@@ -43,6 +52,10 @@ int	input_redir(const char *infile)
 	return (SUCCESS);
 }
 
+/**
+ * Redirects STDOUT to write to the specified output file.
+ * Opens the file in write mode (append or truncate based on the 'append' flag),
+ */
 int	output_redir(const char *outfile, int append)
 {
 	int	fd;
@@ -61,6 +74,11 @@ int	output_redir(const char *outfile, int append)
 	return (SUCCESS);
 }
 
+/**
+ * Heredoc redirection by reading lines from the
+ * user until the delimiter is encountered.
+ * Each line is written to a pipe, which is then duplicated to STDIN.
+ */
 int	heredoc_redir(char *delimiter)
 {
 	int		pipe_fd[2];

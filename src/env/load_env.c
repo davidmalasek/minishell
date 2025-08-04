@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   load_env.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dmalasek <dmalasek@student.42.fr>          +#+  +:+       +#+        */
+/*   By: tklaus <tklaus@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/04 22:25:05 by tomasklaus        #+#    #+#             */
-/*   Updated: 2025/08/02 11:46:14 by dmalasek         ###   ########.fr       */
+/*   Updated: 2025/08/04 11:58:56 by tklaus           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,12 @@ int	count_exported(t_env *env)
 	}
 	return (count);
 }
+
+/**
+ * Converts the exported environment variables
+ * from the linked list to an array of strings.
+ * Each string is in the format "KEY=VALUE".
+ */
 
 char	**env_list_to_array(t_env *env)
 {
@@ -92,6 +98,13 @@ int	add_env_node(t_env **head, char *key, char *value, int exported)
 	return (SUCCESS);
 }
 
+/**
+ * Loads environment variables from an array of strings into a linked list.
+ * Only variables containing '=' are added and marked as exported.
+ *
+ * @param envp Array of environment strings (NULL-terminated).
+ * @return Pointer to the head of the environment variable list.
+ */
 t_env	*load_env(char **envp)
 {
 	t_env	*head;
