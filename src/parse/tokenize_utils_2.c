@@ -6,12 +6,15 @@
 /*   By: dmalasek <dmalasek@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/02 12:03:38 by dmalasek          #+#    #+#             */
-/*   Updated: 2025/08/02 12:10:18 by dmalasek         ###   ########.fr       */
+/*   Updated: 2025/08/04 11:08:09 by dmalasek         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
+/**
+ * Extracts the content inside quotes.
+ */
 char	*extract_quoted_content(char *component)
 {
 	char	*content;
@@ -24,6 +27,9 @@ char	*extract_quoted_content(char *component)
 	return (content);
 }
 
+/**
+ * Handles the special case where the content is exactly $?.
+ */
 char	*handle_simple_exit_status(char *content, int last_exit_status)
 {
 	char	*result;
@@ -37,6 +43,9 @@ char	*handle_simple_exit_status(char *content, int last_exit_status)
 	return (NULL);
 }
 
+/**
+ * Handles $? when it appears in the middle of a string.
+ */
 char	*handle_exit_status_with_context(char *content, char *dollar_pos,
 		int last_exit_status)
 {
@@ -58,6 +67,9 @@ char	*handle_exit_status_with_context(char *content, char *dollar_pos,
 	return (result);
 }
 
+/**
+ * Finds the end of a variable name (alphanumeric or underscore).
+ */
 char	*find_variable_end(char *var_start)
 {
 	char	*var_end;
@@ -68,6 +80,10 @@ char	*find_variable_end(char *var_start)
 	return (var_end);
 }
 
+/**
+ * Builds a new string by joining the parts before,
+ * the variable value, and after the variable.
+ */
 char	*build_result_from_parts(char *before, char *var_value, char *var_end,
 		char *var_name)
 {

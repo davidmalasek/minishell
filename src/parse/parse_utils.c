@@ -6,12 +6,15 @@
 /*   By: dmalasek <dmalasek@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/02 12:23:39 by dmalasek          #+#    #+#             */
-/*   Updated: 2025/08/04 09:53:55 by dmalasek         ###   ########.fr       */
+/*   Updated: 2025/08/04 11:04:30 by dmalasek         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
+/**
+ * Handles the > redirection.
+ */
 int	handle_redir_out(t_command *cmd, t_token *tokens, size_t *tkn_index)
 {
 	(*tkn_index)++;
@@ -37,6 +40,9 @@ int	handle_redir_out(t_command *cmd, t_token *tokens, size_t *tkn_index)
 	}
 }
 
+/**
+ * Handles the >> redirection.
+ */
 int	handle_append_out(t_command *cmd, t_token *tokens, size_t *tkn_index)
 {
 	(*tkn_index)++;
@@ -62,6 +68,9 @@ int	handle_append_out(t_command *cmd, t_token *tokens, size_t *tkn_index)
 	}
 }
 
+/**
+ * Handles the < redirection.
+ */
 int	handle_redir_in(t_command *cmd, t_token *tokens, size_t *tkn_index)
 {
 	(*tkn_index)++;
@@ -86,6 +95,9 @@ int	handle_redir_in(t_command *cmd, t_token *tokens, size_t *tkn_index)
 	}
 }
 
+/**
+ * Handles the << heredoc redirection.
+ */
 int	handle_heredoc(t_command *cmd, t_token *tokens, size_t *tkn_index)
 {
 	(*tkn_index)++;
@@ -112,6 +124,9 @@ int	handle_heredoc(t_command *cmd, t_token *tokens, size_t *tkn_index)
 	}
 }
 
+/**
+ * Processes a single token for a command.
+ */
 int	handle_token(t_command *cmd, t_token *tokens, size_t *tkn_index,
 		size_t *arg_index)
 {

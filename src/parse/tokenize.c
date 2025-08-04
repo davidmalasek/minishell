@@ -3,15 +3,18 @@
 /*                                                        :::      ::::::::   */
 /*   tokenize.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tklaus <tklaus@student.42.fr>              +#+  +:+       +#+        */
+/*   By: dmalasek <dmalasek@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/24 13:43:43 by davidmalase       #+#    #+#             */
-/*   Updated: 2025/08/03 16:11:17 by tklaus           ###   ########.fr       */
+/*   Updated: 2025/08/04 11:06:08 by dmalasek         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
+/**
+ * Expands a variable found at dollar_pos in content using the environment.
+ */
 char	*handle_variable_expansion(char *content, char *dollar_pos, t_env *env)
 {
 	char	*var_start;
@@ -28,6 +31,9 @@ char	*handle_variable_expansion(char *content, char *dollar_pos, t_env *env)
 	return (build_result_from_parts(before, var_value, var_end, var_name));
 }
 
+/**
+ * Handles variable and exit status expansion inside double quotes.
+ */
 char	*expand_in_double_quotes(char *component, t_env *env,
 		int last_exit_status)
 {
@@ -58,6 +64,9 @@ char	*expand_in_double_quotes(char *component, t_env *env,
 	return (result);
 }
 
+/**
+ * Converts a string token into a t_token struct.
+ */
 t_token	process_token(char *component, t_env *env, int last_exit_status)
 {
 	t_token	token;
@@ -75,6 +84,9 @@ t_token	process_token(char *component, t_env *env, int last_exit_status)
 	return (token);
 }
 
+/**
+ * Main entry point for tokenizing the input string.
+ */
 t_token	*tokenize(char *input, t_env *env, int last_exit_status,
 		int *has_quotes)
 {

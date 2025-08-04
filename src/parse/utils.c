@@ -6,12 +6,15 @@
 /*   By: dmalasek <dmalasek@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/22 11:57:02 by dmalasek          #+#    #+#             */
-/*   Updated: 2025/08/03 18:29:47 by dmalasek         ###   ########.fr       */
+/*   Updated: 2025/08/04 11:10:30 by dmalasek         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
+/**
+ * Counts the number of tokens in a t_token array.
+ */
 size_t	get_token_count(t_token *tokens)
 {
 	size_t	count;
@@ -24,6 +27,9 @@ size_t	get_token_count(t_token *tokens)
 	return (count);
 }
 
+/**
+ * Counts the number of commands in a token array.
+ */
 size_t	get_command_count(t_token *tokens)
 {
 	size_t	count;
@@ -40,6 +46,9 @@ size_t	get_command_count(t_token *tokens)
 	return (count + 1);
 }
 
+/**
+ * Returns the length of a NULL-terminated array of strings.
+ */
 size_t	get_array_length(char **array)
 {
 	size_t	len;
@@ -52,6 +61,9 @@ size_t	get_array_length(char **array)
 	return (len);
 }
 
+/**
+ * Determines the length of an operator token at the start of a string.
+ */
 size_t	operator_token_length(const char *start, char *quote_char_out)
 {
 	if ((start[0] == '<' && start[1] == '<') || (start[0] == '>'

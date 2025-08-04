@@ -6,12 +6,15 @@
 /*   By: dmalasek <dmalasek@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/22 11:57:02 by dmalasek          #+#    #+#             */
-/*   Updated: 2025/08/04 09:53:15 by dmalasek         ###   ########.fr       */
+/*   Updated: 2025/08/04 11:02:25 by dmalasek         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
+/**
+ * Allocates memory for the args array in a command.
+ */
 int	alloc_command_args(t_command *cmd, t_token *tokens, size_t tkn_index)
 {
 	size_t	argc;
@@ -21,6 +24,9 @@ int	alloc_command_args(t_command *cmd, t_token *tokens, size_t tkn_index)
 	return (cmd->args != NULL);
 }
 
+/**
+ * Fills a single t_command struct with all its arguments and redirections.
+ */
 int	process_command(t_command *cmds, t_token *tokens, size_t *cmd_index,
 		size_t *tkn_index)
 {
@@ -35,6 +41,9 @@ int	process_command(t_command *cmds, t_token *tokens, size_t *cmd_index,
 	return (1);
 }
 
+/**
+ * Handles the pipe operator between commands.
+ */
 void	handle_pipe(t_command *cmds, t_token *tokens, size_t *cmd_index,
 		size_t *tkn_index)
 {
@@ -46,6 +55,9 @@ void	handle_pipe(t_command *cmds, t_token *tokens, size_t *cmd_index,
 	}
 }
 
+/**
+ * Processes all commands in the token list, filling the cmds array.
+ */
 t_command	*process_all_commands(t_command *cmds, t_token *tokens,
 		int has_quotes)
 {
@@ -72,6 +84,9 @@ t_command	*process_all_commands(t_command *cmds, t_token *tokens,
 	return (cmds[cmd_index].args = NULL, cleanup_tokens(tokens), cmds);
 }
 
+/**
+ * Main entry point for parsing user input into commands.
+ */
 t_command	*parse(char *input, t_env *env, int *last_exit_status)
 {
 	t_token		*tokens;

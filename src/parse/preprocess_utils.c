@@ -6,12 +6,16 @@
 /*   By: dmalasek <dmalasek@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/01 20:45:31 by dmalasek          #+#    #+#             */
-/*   Updated: 2025/08/02 11:43:20 by dmalasek         ###   ########.fr       */
+/*   Updated: 2025/08/04 11:00:13 by dmalasek         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
+/**
+ * Extracts the next token from the input,
+ * updates the cursor, and handles errors.
+ */
 char	*get_token(const char **cursor, char delimiter, int *has_quotes)
 {
 	const char	*start;
@@ -36,12 +40,16 @@ char	*get_token(const char **cursor, char delimiter, int *has_quotes)
 	return (token);
 }
 
+/**
+ * Counts how many tokens are in the input string.
+ */
 size_t	count_tokens(const char *input, char delimiter, int *has_quotes)
 {
-	const char	*scan = input;
+	const char	*scan;
 	size_t		token_count;
 	char		*discard;
 
+	scan = input;
 	token_count = 0;
 	*has_quotes = 0;
 	while (*scan)
@@ -59,6 +67,9 @@ size_t	count_tokens(const char *input, char delimiter, int *has_quotes)
 	return (token_count);
 }
 
+/**
+ * Fills an array with all tokens from the input.
+ */
 char	**fill_tokens(const char *input, char delimiter, int *has_quotes,
 		size_t token_count)
 {
@@ -89,11 +100,17 @@ char	**fill_tokens(const char *input, char delimiter, int *has_quotes,
 	return (tokens);
 }
 
+/**
+ * Checks if a character is a delimiter or end of string.
+ */
 int	is_delimiter(char character, char delimiter)
 {
 	return (character == delimiter || character == '\0');
 }
 
+/**
+ * Checks if the string at s is a shell operator (|, <, >, <<, >>).
+ */
 int	is_operator(const char *s)
 {
 	return ((s[0] == '<' && s[1] == '<') || (s[0] == '>' && s[1] == '>')

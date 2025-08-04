@@ -6,12 +6,15 @@
 /*   By: dmalasek <dmalasek@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/02 11:48:02 by dmalasek          #+#    #+#             */
-/*   Updated: 2025/08/02 11:48:33 by dmalasek         ###   ########.fr       */
+/*   Updated: 2025/08/04 11:09:08 by dmalasek         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
+/**
+ * Looks up the value of an environment variable.
+ */
 char	*get_env_value(t_env *env, char *key)
 {
 	while (env)
@@ -23,6 +26,9 @@ char	*get_env_value(t_env *env, char *key)
 	return (NULL);
 }
 
+/**
+ * Expands a variable token (e.g., $HOME or $?).
+ */
 char	*expand_variable(char *token, t_env *env, int last_exit_status)
 {
 	char	*key;
@@ -42,6 +48,9 @@ char	*expand_variable(char *token, t_env *env, int last_exit_status)
 	return (ft_strdup(token));
 }
 
+/**
+ * Checks if a token is single-quoted.
+ */
 int	is_single_quoted(char *component)
 {
 	int	len;
@@ -52,6 +61,9 @@ int	is_single_quoted(char *component)
 	return (len >= 2 && component[0] == '\'' && component[len - 1] == '\'');
 }
 
+/**
+ * Removes surrounding quotes from a token.
+ */
 char	*remove_quotes(char *component)
 {
 	int		len;
@@ -67,6 +79,9 @@ char	*remove_quotes(char *component)
 	return (ft_strdup(component));
 }
 
+/**
+ * Checks if a token is double-quoted.
+ */
 int	is_double_quoted(char *component)
 {
 	int	len;

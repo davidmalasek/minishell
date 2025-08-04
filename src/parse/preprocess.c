@@ -6,12 +6,15 @@
 /*   By: dmalasek <dmalasek@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/22 11:57:02 by dmalasek          #+#    #+#             */
-/*   Updated: 2025/08/02 11:45:24 by dmalasek         ###   ########.fr       */
+/*   Updated: 2025/08/04 10:59:14 by dmalasek         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
+/**
+ * Copies a token from src to dest, removing surrounding quotes if present.
+ */
 void	copy_token(char *dest, const char *src, size_t length)
 {
 	size_t	i;
@@ -30,6 +33,9 @@ void	copy_token(char *dest, const char *src, size_t length)
 	dest[length] = '\0';
 }
 
+/**
+ * Calculates the length of the next token, handling quoted substrings.
+ */
 size_t	quoted_token_length(const char *start, char delimiter, int *has_quotes,
 		char *quote_char_out)
 {
@@ -56,6 +62,10 @@ size_t	quoted_token_length(const char *start, char delimiter, int *has_quotes,
 	return (length);
 }
 
+/**
+ * Determines the length of the next token,
+ * whether it's an operator or a word (possibly quoted).
+ */
 size_t	scan_token_length(const char *start, char delimiter, int *has_quotes,
 		char *quote_char_out)
 {
@@ -64,6 +74,10 @@ size_t	scan_token_length(const char *start, char delimiter, int *has_quotes,
 	return (quoted_token_length(start, delimiter, has_quotes, quote_char_out));
 }
 
+/**
+ * Allocates memory for a token and copies the substring
+ * from start of given length.
+ */
 char	*alloc_and_copy_token(const char *start, size_t length)
 {
 	char	*token;
@@ -75,6 +89,9 @@ char	*alloc_and_copy_token(const char *start, size_t length)
 	return (token);
 }
 
+/**
+ * Main entry point for splitting the input into tokens.
+ */
 char	**custom_split(const char *input, char delimiter, int *has_quotes)
 {
 	size_t	token_count;
