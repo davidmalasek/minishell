@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main_utils.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tklaus <tklaus@student.42.fr>              +#+  +:+       +#+        */
+/*   By: dmalasek <dmalasek@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/02 12:41:20 by dmalasek          #+#    #+#             */
-/*   Updated: 2025/08/03 19:51:16 by tklaus           ###   ########.fr       */
+/*   Updated: 2025/08/04 09:57:28 by dmalasek         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,28 +37,36 @@ char	*get_input(void)
 		free(input);
 		return (NULL);
 	}
+	while (needs_continuation(input))
+	{
+		input = get_continuation_input(input);
+		if (!input)
+			return (NULL);
+	}
 	add_history(input);
 	return (input);
 }
 
 int	handle_empty_or_signal(char *input, int *status)
 {
+	int	i;
+
 	if (input && input[0] != '\0')
 	{
-		int i = 0;
+		i = 0;
 		while (input[i] && (input[i] == ' ' || input[i] == '\t'))
 			i++;
 		if (input[i] == '\0')
 		{
 			*status = 0;
 			free(input);
-			return 1;
+			return (1);
 		}
 	}
 	if (g_signal_interrupted)
 	{
 		*status = 130;
-		g_signal_interrupted = 0; //mozna vymazat po testovani
+		g_signal_interrupted = 0;
 	}
 	if (!input)
 		return (1);

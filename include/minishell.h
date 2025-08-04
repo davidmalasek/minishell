@@ -6,7 +6,7 @@
 /*   By: dmalasek <dmalasek@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/02 14:39:37 by dmalasek          #+#    #+#             */
-/*   Updated: 2025/08/04 09:29:49 by dmalasek         ###   ########.fr       */
+/*   Updated: 2025/08/04 09:59:16 by dmalasek         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,6 +81,14 @@ int					handle_empty_or_signal(char *input, int *status);
 int					handle_invalid_input(char *input, int *status);
 
 int					validate_input(char *input);
+
+// src/main_utils_2.c
+int					has_invalid_pipe_sequence(char *input);
+int					needs_continuation(char *input);
+char				*get_continuation_input(char *initial_input);
+
+// src/main_utils_3.c
+char				*get_continuation_input(char *initial_input);
 
 // src/parse/utils.c
 size_t				get_array_length(char **array);
@@ -194,6 +202,7 @@ size_t				count_args(t_token *tokens, size_t index);
 void				free_commands(t_command *commands, size_t count);
 int					fill_command_fields(t_command *cmd, t_token *tokens,
 						size_t *tkn_index);
+void				free_and_set(char **target, char *new_value);
 
 // src/exec/exec_utils.c
 void				setup_pipes(int pipes[4]);

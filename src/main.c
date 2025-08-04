@@ -6,7 +6,7 @@
 /*   By: dmalasek <dmalasek@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 15:30:36 by dmalasek          #+#    #+#             */
-/*   Updated: 2025/08/04 09:25:32 by dmalasek         ###   ########.fr       */
+/*   Updated: 2025/08/04 10:00:47 by dmalasek         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,6 @@ static void	execute_and_cleanup(char *input, t_env *env, int *status)
 	command_list = parse(input, env, status);
 	if (!command_list)
 	{
-		//*status = 2;
 		free(input);
 		return ;
 	}

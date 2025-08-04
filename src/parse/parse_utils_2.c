@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse_utils_2.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tklaus <tklaus@student.42.fr>              +#+  +:+       +#+        */
+/*   By: dmalasek <dmalasek@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/02 12:25:07 by dmalasek          #+#    #+#             */
-/*   Updated: 2025/08/03 19:03:52 by tklaus           ###   ########.fr       */
+/*   Updated: 2025/08/04 09:56:42 by dmalasek         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,4 +80,11 @@ int	fill_command_fields(t_command *cmd, t_token *tokens, size_t *tkn_index)
 	}
 	cmd->args[arg_index] = NULL;
 	return (SUCCESS);
+}
+
+void	free_and_set(char **target, char *new_value)
+{
+	if (*target)
+		free(*target);
+	*target = ft_strdup(new_value);
 }
