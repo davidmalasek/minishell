@@ -75,7 +75,6 @@ static void	execute_and_cleanup(char *input, t_env *env, int *status)
 	command_list = parse(input, env, status);
 	if (!command_list)
 	{
-		//*status = 2;
 		free(input);
 		return ;
 	}

@@ -6,18 +6,11 @@
 /*   By: dmalasek <dmalasek@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/02 12:23:39 by dmalasek          #+#    #+#             */
-/*   Updated: 2025/08/03 19:43:23 by dmalasek         ###   ########.fr       */
+/*   Updated: 2025/08/04 09:53:55 by dmalasek         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
-
-static void	free_and_set(char **target, char *new_value)
-{
-	if (*target)
-		free(*target);
-	*target = ft_strdup(new_value);
-}
 
 int	handle_redir_out(t_command *cmd, t_token *tokens, size_t *tkn_index)
 {

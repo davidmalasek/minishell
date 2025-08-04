@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tklaus <tklaus@student.42.fr>              +#+  +:+       +#+        */
+/*   By: dmalasek <dmalasek@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/22 11:57:02 by dmalasek          #+#    #+#             */
-/*   Updated: 2025/08/03 19:52:51 by tklaus           ###   ########.fr       */
+/*   Updated: 2025/08/04 09:53:15 by dmalasek         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,24 +77,19 @@ t_command	*parse(char *input, t_env *env, int *last_exit_status)
 	t_token		*tokens;
 	t_command	*cmds;
 	int			has_quotes;
-	/*int			i;
-
-	 i = 0;
-	while (input && input[i])
-	{
-		if (input[i] != ' ' && input[i] != '\t')
-			break ;
-		i++;
-	}
-	if (!input || input[i] == '\0')
-	{
-		*last_exit_status = 0;
-		return (NULL);
-	} */
+	size_t		token_count;
 
 	tokens = tokenize(input, env, *last_exit_status, &has_quotes);
 	if (!tokens)
 		return (NULL);
+	token_count = get_token_count(tokens);
+	if (token_count > 0 && tokens[token_count - 1].type == PIPE)
+	{
+		printf("minishell: syntax error: unexpected end of file\n");
+		cleanup_tokens(tokens);
+		*last_exit_status = 2;
+		return (NULL);
+	}
 	cmds = malloc(sizeof(t_command) * (get_command_count(tokens) + 1));
 	if (!cmds)
 		return (free(tokens), NULL);
