@@ -6,7 +6,7 @@
 /*   By: tklaus <tklaus@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 15:30:36 by dmalasek          #+#    #+#             */
-/*   Updated: 2025/08/04 11:56:25 by tklaus           ###   ########.fr       */
+/*   Updated: 2025/08/04 14:39:30 by tklaus           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,9 @@
 
 int			g_signal_interrupted = 0;
 
-/*
-HOW TO USE:
-- add print_command(command_list) to execute_and_cleanup function
+
+/* HOW TO USE:
+- add print_command(command_list) to execute_and_cleanup function */
 void	print_command(t_command *command_list)
 {
 	int			i;
@@ -62,7 +62,7 @@ void	print_command(t_command *command_list)
 		cmd++;
 	}
 }
-*/
+
 
 static void	execute_and_cleanup(char *input, t_env *env, int *status)
 {
@@ -74,6 +74,7 @@ static void	execute_and_cleanup(char *input, t_env *env, int *status)
 		free(input);
 		return ;
 	}
+	print_command(command_list);
 	exec(command_list, env, status);
 	cleanup_commands(command_list);
 	free(input);
