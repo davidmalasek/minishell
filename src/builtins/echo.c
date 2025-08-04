@@ -3,10 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   echo.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dmalasek <dmalasek@student.42.fr>          +#+  +:+       +#+        */
+/*   By: tklaus <tklaus@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/04 20:57:57 by tomasklaus        #+#    #+#             */
+<<<<<<< HEAD
 /*   Updated: 2025/08/04 09:32:12 by dmalasek         ###   ########.fr       */
+=======
+/*   Updated: 2025/08/04 09:20:03 by tklaus           ###   ########.fr       */
+>>>>>>> 832db7b (small changes in echo and exit)
 /*                                                                            */
 /* ************************************************************************** */
 
