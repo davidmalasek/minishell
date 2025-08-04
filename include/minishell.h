@@ -3,14 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dmalasek <dmalasek@student.42.fr>          +#+  +:+       +#+        */
+/*   By: tklaus <tklaus@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/02 14:39:37 by dmalasek          #+#    #+#             */
-<<<<<<< HEAD
-/*   Updated: 2025/08/04 09:29:49 by dmalasek         ###   ########.fr       */
-=======
-/*   Updated: 2025/08/04 09:22:17 by tklaus           ###   ########.fr       */
->>>>>>> 832db7b (small changes in echo and exit)
+/*   Updated: 2025/08/04 10:08:56 by tklaus           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,10 +35,6 @@
 # define SUCCESS 0
 # define ERROR 1
 
-<<<<<<< HEAD
-=======
-
->>>>>>> 832db7b (small changes in echo and exit)
 // environment structure for env linked list
 
 typedef struct s_env

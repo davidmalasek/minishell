@@ -6,7 +6,7 @@
 /*   By: tklaus <tklaus@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/04 20:57:25 by tomasklaus        #+#    #+#             */
-/*   Updated: 2025/08/04 09:46:15 by tklaus           ###   ########.fr       */
+/*   Updated: 2025/08/04 10:32:48 by tklaus           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 int	ft_exit(char **args, int status)
 {
 	int	error;
+
 	error = 0;
 	if (validate_args(args, "exit", 2, 1) != SUCCESS)
 		return (ERROR);
