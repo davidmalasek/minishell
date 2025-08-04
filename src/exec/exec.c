@@ -3,15 +3,22 @@
 /*                                                        :::      ::::::::   */
 /*   exec.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dmalasek <dmalasek@student.42.fr>          +#+  +:+       +#+        */
+/*   By: tklaus <tklaus@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/22 12:27:04 by tomasklaus        #+#    #+#             */
-/*   Updated: 2025/08/04 10:43:35 by dmalasek         ###   ########.fr       */
+/*   Updated: 2025/08/04 11:57:23 by tklaus           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
+/**
+ * Checks if the given command is a builtin that must
+ * be executed in the parent process.
+ * Builtins: cd, exit, unset, export (with arguments).
+ *
+ * @return 1 if the command is a parent builtin, 0 otherwise.
+ */
 int	is_parent_builtin(t_command *command)
 {
 	if (!command || !command->args || !command->args[0])
@@ -30,6 +37,13 @@ int	is_parent_builtin(t_command *command)
 	}
 	return (0);
 }
+
+/**
+ * Executes a builtin command and returns its exit status.
+ * Supports: cd, echo, pwd, export, unset, env, exit.
+ *
+ * @return The exit status of the builtin command, or ERROR on failure.
+ */
 
 int	exec_builtin(t_command command, t_env *env, int status)
 {
@@ -51,6 +65,12 @@ int	exec_builtin(t_command command, t_env *env, int status)
 		return (ft_exit(command.args, status));
 	return (ERROR);
 }
+
+/**
+ * Executes a command in a child process.
+ * Handles redirections, pipes, builtins, and external commands.
+ * If the command is not found, prints an error and exits with status 127.
+ */
 
 static void	exec_child_process(t_command *command, t_env *env, int *status,
 		int pipes[4])
@@ -80,6 +100,12 @@ static void	exec_child_process(t_command *command, t_env *env, int *status,
 	exit(127);
 }
 
+/**
+ * Handles the parent process after forking a child.
+ * Closes unused pipes and waits for the child process to finish.
+ * Updates the shell status based on the child's exit status or signal.
+ */
+
 static void	exec_parent_process(t_command *command, int *status, int pipes[4])
 {
 	int	wstatus;
@@ -98,6 +124,7 @@ static void	exec_parent_process(t_command *command, int *status, int pipes[4])
 	else if (WIFEXITED(wstatus))
 		*status = WEXITSTATUS(wstatus);
 }
+
 /* pipes[0]=prev_pipe_read, pipes[1]=prev_pipe_write,
 		pipes[2]=current_pipe_read, pipes[3]=current_pipe_write */
 

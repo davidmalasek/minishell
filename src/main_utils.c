@@ -3,15 +3,18 @@
 /*                                                        :::      ::::::::   */
 /*   main_utils.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dmalasek <dmalasek@student.42.fr>          +#+  +:+       +#+        */
+/*   By: tklaus <tklaus@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/02 12:41:20 by dmalasek          #+#    #+#             */
-/*   Updated: 2025/08/04 09:57:28 by dmalasek         ###   ########.fr       */
+/*   Updated: 2025/08/04 11:55:45 by tklaus           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
 
+/**
+ * Initializes the shell environment and sets up signal handlers.
+ */
 t_env	*initialize_shell(char **envp)
 {
 	t_env	*env;
@@ -20,6 +23,17 @@ t_env	*initialize_shell(char **envp)
 	setup_signal_handlers();
 	return (env);
 }
+/**
+ * Reads user input from the terminal, handles EOF, empty input,
+ *	and line continuation.
+ * Handles the following cases with if statements:
+ *   - if (input == NULL): Checks for EOF (Ctrl+D), exits the shell.
+ *   - if (input[0] == '\0'): Checks for empty input (just Enter), returns NULL.
+ *   - while (needs_continuation(input)): Checks if input needs continuation,
+ *	prompts for more input.
+ * Adds valid input to history.
+ * @return The input string, or NULL if input is empty or interrupted.
+ */
 
 char	*get_input(void)
 {
@@ -30,7 +44,7 @@ char	*get_input(void)
 	if (input == NULL)
 	{
 		write(STDOUT_FILENO, "exit\n", 5);
-		exit(EXIT_SUCCESS);
+		exit(2);
 	}
 	if (input[0] == '\0')
 	{
@@ -47,6 +61,15 @@ char	*get_input(void)
 	return (input);
 }
 
+/**
+ * Checks whether the provided input string contains only whitespace characters
+ * (spaces and tabs), indicating that the input is effectively empty.
+ * Checks if a signal (such as SIGINT or SIGQUIT)
+ * was received during input processing
+ *
+ * Checks if the input is empty (spaces/tabs only) or if a signal was received.
+ * @return 1 if input should be skipped, 0 otherwise.
+ */
 int	handle_empty_or_signal(char *input, int *status)
 {
 	int	i;
