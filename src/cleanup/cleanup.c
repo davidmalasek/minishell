@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cleanup.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dmalasek <dmalasek@student.42.fr>          +#+  +:+       +#+        */
+/*   By: tklaus <tklaus@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 00:00:00 by tomasklaus        #+#    #+#             */
-/*   Updated: 2025/08/02 14:41:28 by dmalasek         ###   ########.fr       */
+/*   Updated: 2025/08/09 17:43:18 by tklaus           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,26 +33,13 @@ void	cleanup_env(t_env *env)
 void	cleanup_commands(t_command *command_list)
 {
 	int	i;
-	int	j;
 
+	i = 0;
 	if (!command_list)
 		return ;
-	i = 0;
 	while (command_list[i].args)
 	{
-		j = 0;
-		while (command_list[i].args[j])
-		{
-			free(command_list[i].args[j]);
-			j++;
-		}
-		free(command_list[i].args);
-		if (command_list[i].infile)
-			free(command_list[i].infile);
-		if (command_list[i].outfile)
-			free(command_list[i].outfile);
-		if (command_list[i].heredoc_delim)
-			free(command_list[i].heredoc_delim);
+		cleanup_single_command(&command_list[i]);
 		i++;
 	}
 	free(command_list);
@@ -74,9 +61,11 @@ void	cleanup_tokens(t_token *tokens)
 	free(tokens);
 }
 
-void	cleanup_shell(t_command *command_list, t_env *env)
+void	exit_shell(t_command *command_list, t_env *env, int exit_code)
 {
-	cleanup_commands(command_list);
-	cleanup_env(env);
-	clear_history();
+	if (command_list)
+		cleanup_commands(command_list);
+	if (env)
+		cleanup_env(env);
+	exit(exit_code);
 }

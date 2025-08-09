@@ -31,6 +31,7 @@ SRC = src/main.c \
 	src/parse/parse_utils_2.c \
 	src/parse/parse_utils_3.c \
 	src/cleanup/cleanup.c \
+	src/cleanup/cleanup_utils.c \
 	src/main_utils.c \
 	src/main_utils_2.c \
 	src/main_utils_3.c

@@ -6,7 +6,7 @@
 /*   By: tklaus <tklaus@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/02 12:41:20 by dmalasek          #+#    #+#             */
-/*   Updated: 2025/08/04 11:55:45 by tklaus           ###   ########.fr       */
+/*   Updated: 2025/08/09 17:43:33 by tklaus           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ t_env	*initialize_shell(char **envp)
  * @return The input string, or NULL if input is empty or interrupted.
  */
 
-char	*get_input(void)
+char	*get_input(t_env *env)
 {
 	char	*input;
 
@@ -44,7 +44,7 @@ char	*get_input(void)
 	if (input == NULL)
 	{
 		write(STDOUT_FILENO, "exit\n", 5);
-		exit(2);
+		exit_shell(NULL, env, 2);
 	}
 	if (input[0] == '\0')
 	{

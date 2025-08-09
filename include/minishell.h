@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tomasklaus <tomasklaus@student.42.fr>      +#+  +:+       +#+        */
+/*   By: tklaus <tklaus@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/02 14:39:37 by dmalasek          #+#    #+#             */
-/*   Updated: 2025/08/09 10:39:07 by tomasklaus       ###   ########.fr       */
+/*   Updated: 2025/08/09 17:43:11 by tklaus           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,7 +89,7 @@ typedef struct s_exec_context
 
 // src/main.c
 t_env						*initialize_shell(char **envp);
-char						*get_input(void);
+char						*get_input(t_env *env);
 int							validate_input(char *input);
 int							handle_empty_or_signal(char *input, int *status);
 int							handle_invalid_input(char *input, int *status);
@@ -148,7 +148,8 @@ void						free_str_array(char **arr);
 int							ft_cd(char **args, t_env *env);
 int							ft_echo(char **args);
 int							ft_env(char **args, t_env *env);
-int							ft_exit(char **args, int status);
+int							ft_exit(char **args, int status,
+								t_exec_context exec_context);
 int							ft_export(char **args, t_env *env);
 int							ft_pwd(void);
 int							ft_unset(char **args, t_env *env);
@@ -160,8 +161,11 @@ int							validate_args(char **args, char *command_name,
 // src/cleanup/
 void						cleanup_env(t_env *env);
 void						cleanup_commands(t_command *command_list);
-void						cleanup_shell(t_command *command_list, t_env *env);
+void						exit_shell(t_command *command_list, t_env *env,
+								int exit_code);
 void						cleanup_tokens(t_token *tokens);
+void						cleanup_file_list(t_outfile_node *list);
+void						cleanup_single_command(t_command *cmd);
 
 // src/parse/preprocess_utils.c
 char						*get_token(const char **cursor, char delimiter,
@@ -230,7 +234,7 @@ char						**child_setup(t_command *cmd, t_env *env,
 								int pipes[4]);
 int							is_parent_builtin(t_command *command);
 int							exec_builtin(t_command command, t_env *env,
-								int status);
+								int status, t_exec_context exec_context);
 
 // Define the global variable for signal interruption
 extern int					g_signal_interrupted;

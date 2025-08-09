@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tomasklaus <tomasklaus@student.42.fr>      +#+  +:+       +#+        */
+/*   By: tklaus <tklaus@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 15:30:36 by dmalasek          #+#    #+#             */
-/*   Updated: 2025/08/09 10:00:06 by tomasklaus       ###   ########.fr       */
+/*   Updated: 2025/08/09 17:46:12 by tklaus           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@ int			g_signal_interrupted = 0;
 {
 	int			i;
 	t_command	*cmd;
+	
 
 	cmd = command_list;
 	while (cmd && cmd->args)
@@ -61,7 +62,6 @@ int			g_signal_interrupted = 0;
 		cmd++;
 	}
 } */
-
 static void	execute_and_cleanup(char *input, t_env *env, int *status)
 {
 	t_command	*command_list;
@@ -98,7 +98,7 @@ int	main_loop(t_env *env)
 	status = 0;
 	while (1)
 	{
-		input = get_input();
+		input = get_input(env);
 		if (handle_empty_or_signal(input, &status))
 			continue ;
 		if (handle_invalid_input(input, &status))

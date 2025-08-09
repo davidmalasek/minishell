@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec_utils.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tomasklaus <tomasklaus@student.42.fr>      +#+  +:+       +#+        */
+/*   By: tklaus <tklaus@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/03 15:16:59 by dmalasek          #+#    #+#             */
-/*   Updated: 2025/08/09 10:27:13 by tomasklaus       ###   ########.fr       */
+/*   Updated: 2025/08/09 17:43:20 by tklaus           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,8 @@ int	is_parent_builtin(t_command *command)
  * @return The exit status of the builtin command, or ERROR on failure.
  */
 
-int	exec_builtin(t_command command, t_env *env, int status)
+int	exec_builtin(t_command command, t_env *env, int status,
+		t_exec_context exec_context)
 {
 	if (!command.args || !command.args[0])
 		return (ERROR);
@@ -82,6 +83,6 @@ int	exec_builtin(t_command command, t_env *env, int status)
 	else if (ft_strcmp(command.args[0], "env") == 0)
 		return (ft_env(command.args, env));
 	else if (ft_strcmp(command.args[0], "exit") == 0)
-		return (ft_exit(command.args, status));
+		return (ft_exit(command.args, status, exec_context));
 	return (ERROR);
 }

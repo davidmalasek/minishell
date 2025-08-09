@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   redir.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tomasklaus <tomasklaus@student.42.fr>      +#+  +:+       +#+        */
+/*   By: tklaus <tklaus@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/06 17:22:53 by tomasklaus        #+#    #+#             */
-/*   Updated: 2025/08/09 10:22:07 by tomasklaus       ###   ########.fr       */
+/*   Updated: 2025/08/09 17:46:38 by tklaus           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,9 +74,6 @@ int	output_redir(const char *outfile, int append)
 
 	if (append)
 	{
-		fd = open(outfile, O_WRONLY | O_APPEND, 0644);
-		if (fd == -1)
-			return (ERROR);
 		fd = open(outfile, O_WRONLY | O_CREAT | O_APPEND, 0644);
 	}
 	else

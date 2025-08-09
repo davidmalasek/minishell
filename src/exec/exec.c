@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tomasklaus <tomasklaus@student.42.fr>      +#+  +:+       +#+        */
+/*   By: tklaus <tklaus@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/22 12:27:04 by tomasklaus        #+#    #+#             */
-/*   Updated: 2025/08/09 10:38:42 by tomasklaus       ###   ########.fr       */
+/*   Updated: 2025/08/09 17:52:00 by tklaus           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,18 +18,20 @@
  * If the command is not found, prints an error and exits with status 127.
  */
 
-static void	exec_child_process(t_command *cmd, t_env *env, int *status,
-		int pipes[4])
+static void	exec_child_process(t_command *cmd, t_exec_context exec_context,
+		int *status, int pipes[4])
 {
 	char	**envp;
 	char	*path;
+	t_env	*env;
 
+	env = exec_context.env;
 	envp = child_setup(cmd, env, pipes);
 	if (is_builtin(cmd->args[0]))
 	{
 		if (is_parent_builtin(cmd))
 			exit(0);
-		*status = exec_builtin(*cmd, env, *status);
+		*status = exec_builtin(*cmd, env, *status, exec_context);
 		free_str_array(envp);
 		exit(*status);
 	}
@@ -74,29 +76,29 @@ static void	exec_command_loop(t_exec_context exec_context, int *status,
 		int pipes[4], pid_t *last_pid)
 {
 	pid_t		pid;
-	t_command	*command_list;
+	t_command	*cmd;
 
-	command_list = exec_context.command_list;
-	while (command_list->args != NULL)
+	cmd = exec_context.command_list;
+	while (cmd->args != NULL)
 	{
-		if (is_parent_builtin(command_list) && pipes[0] < 0
-			&& !command_list->pipe_to_next)
+		if (is_parent_builtin(cmd) && pipes[0] < 0 && !cmd->pipe_to_next)
 		{
-			*status = exec_builtin(*command_list, exec_context.env, *status);
-			command_list++;
+			*status = exec_builtin(*cmd, exec_context.env, *status,
+					exec_context);
+			cmd++;
 			continue ;
 		}
-		if (command_list->pipe_to_next)
+		if (cmd->pipe_to_next)
 			pipe(&pipes[2]);
 		pid = fork();
 		if (pid == 0)
-			exec_child_process(command_list, exec_context.env, status, pipes);
+			exec_child_process(cmd, exec_context, status, pipes);
 		else
 		{
 			*last_pid = pid;
-			exec_parent_process(command_list, pipes);
+			exec_parent_process(cmd, pipes);
 		}
-		command_list++;
+		cmd++;
 	}
 }
 

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse_utils.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tomasklaus <tomasklaus@student.42.fr>      +#+  +:+       +#+        */
+/*   By: tklaus <tklaus@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/02 12:23:39 by dmalasek          #+#    #+#             */
-/*   Updated: 2025/08/09 09:51:56 by tomasklaus       ###   ########.fr       */
+/*   Updated: 2025/08/09 17:43:29 by tklaus           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -136,9 +136,15 @@ int	handle_heredoc(t_command *cmd, t_token *tokens, size_t *tkn_index)
 int	handle_token(t_command *cmd, t_token *tokens, size_t *tkn_index,
 		size_t *arg_index)
 {
+	char	*dup;
+
 	if (tokens[*tkn_index].type == WORD)
 	{
-		cmd->args[(*arg_index)++] = ft_strdup(tokens[*tkn_index].value);
+		dup = ft_strdup(tokens[*tkn_index].value);
+		if (!dup)
+			return (ERROR);
+		cmd->args[*arg_index] = dup;
+		(*arg_index)++;
 		return (SUCCESS);
 	}
 	else if (tokens[*tkn_index].type == REDIR_OUT)

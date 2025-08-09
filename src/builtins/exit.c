@@ -6,13 +6,13 @@
 /*   By: tklaus <tklaus@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/04 20:57:25 by tomasklaus        #+#    #+#             */
-/*   Updated: 2025/08/04 10:32:48 by tklaus           ###   ########.fr       */
+/*   Updated: 2025/08/09 17:43:14 by tklaus           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
-int	ft_exit(char **args, int status)
+int	ft_exit(char **args, int status, t_exec_context exec_context)
 {
 	int	error;
 
@@ -31,6 +31,6 @@ int	ft_exit(char **args, int status)
 		}
 	}
 	ft_putstr_fd("Quitting session\n", 1);
-	exit(status);
+	exit_shell(exec_context.command_list, exec_context.env, status);
 	return (status);
 }
