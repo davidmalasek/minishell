@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse_utils.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dmalasek <dmalasek@student.42.fr>          +#+  +:+       +#+        */
+/*   By: tomasklaus <tomasklaus@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/02 12:23:39 by dmalasek          #+#    #+#             */
-/*   Updated: 2025/08/04 11:04:30 by dmalasek         ###   ########.fr       */
+/*   Updated: 2025/08/09 09:51:56 by tomasklaus       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,8 @@ int	handle_redir_out(t_command *cmd, t_token *tokens, size_t *tkn_index)
 	(*tkn_index)++;
 	if (tokens[*tkn_index].type == WORD && tokens[*tkn_index].value)
 	{
+		if (check_output_old(cmd, cmd->outfile))
+			return (ERROR);
 		free_and_set(&cmd->outfile, tokens[*tkn_index].value);
 		cmd->append = 0;
 		return (SUCCESS);
@@ -48,6 +50,8 @@ int	handle_append_out(t_command *cmd, t_token *tokens, size_t *tkn_index)
 	(*tkn_index)++;
 	if (tokens[*tkn_index].type == WORD && tokens[*tkn_index].value)
 	{
+		if (check_output_old(cmd, cmd->outfile))
+			return (ERROR);
 		free_and_set(&cmd->outfile, tokens[*tkn_index].value);
 		cmd->append = 1;
 		return (SUCCESS);
@@ -76,6 +80,7 @@ int	handle_redir_in(t_command *cmd, t_token *tokens, size_t *tkn_index)
 	(*tkn_index)++;
 	if (tokens[*tkn_index].type == WORD && tokens[*tkn_index].value)
 	{
+		all_infiles(cmd, tokens[*tkn_index].value);
 		free_and_set(&cmd->infile, tokens[*tkn_index].value);
 		return (SUCCESS);
 	}
@@ -103,6 +108,7 @@ int	handle_heredoc(t_command *cmd, t_token *tokens, size_t *tkn_index)
 	(*tkn_index)++;
 	if (tokens[*tkn_index].type == WORD && tokens[*tkn_index].value)
 	{
+		all_heredocs(cmd, tokens[*tkn_index].value);
 		free_and_set(&cmd->heredoc_delim, tokens[*tkn_index].value);
 		return (SUCCESS);
 	}

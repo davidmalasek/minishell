@@ -1,5 +1,23 @@
-leaky se suppressionem
+leaky se suppressionem (valgrind --suppressions=readline.supp --leak-check=full --show-leak-kinds=all ./minishell)
 
-echo ahoj > n > m  //melo by ahoj zustat i v n
+echo ahoj > n > m  //melo by ahoj zustat i v n ✅
+echo hello >> m >> k  //to stejny ✅
+//bude potrebovat udelat free cmd->outfile_old a zkontrolovat leaks❌
 
-valgrind --suppressions=readline.supp --leak-check=full --show-leak-kinds=all ./minishell
+grep a | grep a a potom ctrl-c  //echo $? by melo byt 130 a je 1 (je to ale jenom s pipem) ✅
+
+cat | cat | ls  //udela infinite loop a po ctrl c se vypise ls (melo by nejdriv vypsat ls a pak 2x enter a konec) ✅
+
+cat < h < k //melo by zkontrolovat jestli existuje to prostredni (udelat linked list infile_old a pri input redirection zkontrolovat jestli existuji i vsechny v infile_old) ✅
+//bude potrebovat udelat free cmd->outfile_old a zkontrolovat leaks❌
+
+cat << eof << ek //pravdepodobne by se melo z cmd.heredoc_delim udelat linked list a pri heredoc redir ho projet a u kazdeho udelat loop a pak to ukoncit bez vypisovani ✅
+//bude potrebovat udelat free cmd->outfile_old a zkontrolovat leaks❌
+
+
+jkhjl >> n //nemelo by vytvorit soubor ale dela to ✅
+
+minishell ➜ minishell ➜ ✅
+
+
+NORMINETTE❌

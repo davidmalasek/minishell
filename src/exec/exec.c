@@ -3,68 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   exec.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tklaus <tklaus@student.42.fr>              +#+  +:+       +#+        */
+/*   By: tomasklaus <tomasklaus@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/22 12:27:04 by tomasklaus        #+#    #+#             */
-/*   Updated: 2025/08/04 11:57:23 by tklaus           ###   ########.fr       */
+/*   Updated: 2025/08/09 10:38:42 by tomasklaus       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
-
-/**
- * Checks if the given command is a builtin that must
- * be executed in the parent process.
- * Builtins: cd, exit, unset, export (with arguments).
- *
- * @return 1 if the command is a parent builtin, 0 otherwise.
- */
-int	is_parent_builtin(t_command *command)
-{
-	if (!command || !command->args || !command->args[0])
-		return (0);
-	if (ft_strcmp(command->args[0], "cd") == 0)
-		return (1);
-	if (ft_strcmp(command->args[0], "exit") == 0)
-		return (1);
-	if (ft_strcmp(command->args[0], "unset") == 0)
-		return (1);
-	if (ft_strcmp(command->args[0], "export") == 0)
-	{
-		if (command->args[1] == NULL)
-			return (0);
-		return (1);
-	}
-	return (0);
-}
-
-/**
- * Executes a builtin command and returns its exit status.
- * Supports: cd, echo, pwd, export, unset, env, exit.
- *
- * @return The exit status of the builtin command, or ERROR on failure.
- */
-
-int	exec_builtin(t_command command, t_env *env, int status)
-{
-	if (!command.args || !command.args[0])
-		return (ERROR);
-	if (ft_strcmp(command.args[0], "cd") == 0)
-		return (ft_cd(command.args, env));
-	else if (ft_strcmp(command.args[0], "echo") == 0)
-		return (ft_echo(command.args));
-	else if (ft_strcmp(command.args[0], "pwd") == 0)
-		return (ft_pwd());
-	else if (ft_strcmp(command.args[0], "export") == 0)
-		return (ft_export(command.args, env));
-	else if (ft_strcmp(command.args[0], "unset") == 0)
-		return (ft_unset(command.args, env));
-	else if (ft_strcmp(command.args[0], "env") == 0)
-		return (ft_env(command.args, env));
-	else if (ft_strcmp(command.args[0], "exit") == 0)
-		return (ft_exit(command.args, status));
-	return (ERROR);
-}
 
 /**
  * Executes a command in a child process.
@@ -72,30 +18,30 @@ int	exec_builtin(t_command command, t_env *env, int status)
  * If the command is not found, prints an error and exits with status 127.
  */
 
-static void	exec_child_process(t_command *command, t_env *env, int *status,
+static void	exec_child_process(t_command *cmd, t_env *env, int *status,
 		int pipes[4])
 {
 	char	**envp;
-	char	*resolved_path;
+	char	*path;
 
-	signal(SIGINT, sigint_handler_child);
-	signal(SIGQUIT, SIG_DFL);
-	redir_setup(command);
-	pipe_setup(command, &pipes[2], &pipes[0]);
-	envp = env_list_to_array(env);
-	if (is_builtin(command->args[0]))
+	envp = child_setup(cmd, env, pipes);
+	if (is_builtin(cmd->args[0]))
 	{
-		*status = exec_builtin(*command, env, *status);
+		if (is_parent_builtin(cmd))
+			exit(0);
+		*status = exec_builtin(*cmd, env, *status);
 		free_str_array(envp);
 		exit(*status);
 	}
-	resolved_path = resolve_path(command->args[0], env);
-	if (resolved_path)
+	path = resolve_path(cmd->args[0], env);
+	if (path)
 	{
-		execve(resolved_path, command->args, envp);
-		free(resolved_path);
+		execve(path, cmd->args, envp);
+		free(path);
 	}
-	printf("minishell: command not found: %s\n", command->args[0]);
+	if (cmd->outfile || cmd->pipe_to_next)
+		dup2(STDERR_FILENO, STDOUT_FILENO);
+	printf("minishell: command not found: %s\n", cmd->args[0]);
 	free_str_array(envp);
 	exit(127);
 }
@@ -106,10 +52,8 @@ static void	exec_child_process(t_command *command, t_env *env, int *status,
  * Updates the shell status based on the child's exit status or signal.
  */
 
-static void	exec_parent_process(t_command *command, int *status, int pipes[4])
+static void	exec_parent_process(t_command *command, int pipes[4])
 {
-	int	wstatus;
-
 	if (pipes[0] > 0)
 		close(pipes[0]);
 	if (command->pipe_to_next)
@@ -117,41 +61,84 @@ static void	exec_parent_process(t_command *command, int *status, int pipes[4])
 		close(pipes[3]);
 		pipes[0] = pipes[2];
 	}
-	wstatus = 0;
-	waitpid(-1, &wstatus, 0);
-	if (WIFSIGNALED(wstatus))
-		*status = 128 + WTERMSIG(wstatus);
-	else if (WIFEXITED(wstatus))
-		*status = WEXITSTATUS(wstatus);
+	else
+	{
+		pipes[0] = -1;
+	}
 }
 
 /* pipes[0]=prev_pipe_read, pipes[1]=prev_pipe_write,
 		pipes[2]=current_pipe_read, pipes[3]=current_pipe_write */
 
-int	exec(t_command *command_list, t_env *env, int *status)
+static void	exec_command_loop(t_exec_context exec_context, int *status,
+		int pipes[4], pid_t *last_pid)
 {
-	pid_t	pid;
-	int		pipes[4];
+	pid_t		pid;
+	t_command	*command_list;
 
-	setup_pipes(pipes);
+	command_list = exec_context.command_list;
 	while (command_list->args != NULL)
 	{
-		if (is_parent_builtin(command_list))
+		if (is_parent_builtin(command_list) && pipes[0] < 0
+			&& !command_list->pipe_to_next)
 		{
-			*status = exec_builtin(*command_list, env, *status);
+			*status = exec_builtin(*command_list, exec_context.env, *status);
 			command_list++;
 			continue ;
 		}
-		signal(SIGINT, SIG_IGN);
 		if (command_list->pipe_to_next)
 			pipe(&pipes[2]);
 		pid = fork();
 		if (pid == 0)
-			exec_child_process(command_list, env, status, pipes);
+			exec_child_process(command_list, exec_context.env, status, pipes);
 		else
-			exec_parent_process(command_list, status, pipes);
+		{
+			*last_pid = pid;
+			exec_parent_process(command_list, pipes);
+		}
 		command_list++;
 	}
+}
+
+static void	wait_for_children(pid_t last_pid, int *status)
+{
+	int		wstatus;
+	pid_t	wpid;
+
+	wpid = wait(&wstatus);
+	while (wpid > 0)
+	{
+		if (wpid == last_pid)
+		{
+			if (WIFSIGNALED(wstatus))
+			{
+				*status = 128 + WTERMSIG(wstatus);
+				if (WTERMSIG(wstatus) == SIGINT)
+					write(STDOUT_FILENO, "\n", 1);
+			}
+			else if (WIFEXITED(wstatus))
+				*status = WEXITSTATUS(wstatus);
+		}
+		wpid = wait(&wstatus);
+	}
+}
+
+int	exec(t_command *command_list, t_env *env, int *status)
+{
+	int				pipes[4];
+	pid_t			last_pid;
+	t_exec_context	exec_context;
+
+	exec_context.command_list = command_list;
+	exec_context.env = env;
+	last_pid = -1;
+	signal(SIGINT, SIG_IGN);
+	signal(SIGQUIT, SIG_IGN);
+	setup_pipes(pipes);
+	exec_command_loop(exec_context, status, pipes, &last_pid);
+	if (pipes[0] > 0)
+		close(pipes[0]);
+	wait_for_children(last_pid, status);
 	setup_signal_handlers();
 	return (SUCCESS);
 }

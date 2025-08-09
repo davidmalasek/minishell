@@ -3,12 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   exec_utils.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dmalasek <dmalasek@student.42.fr>          +#+  +:+       +#+        */
+/*   By: tomasklaus <tomasklaus@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/03 15:16:59 by dmalasek          #+#    #+#             */
-/*   Updated: 2025/08/03 15:17:33 by dmalasek         ###   ########.fr       */
+/*   Updated: 2025/08/09 10:27:13 by tomasklaus       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
+#include "../../include/minishell.h"
 
 void	setup_pipes(int pipes[4])
 {
@@ -16,4 +18,70 @@ void	setup_pipes(int pipes[4])
 	pipes[1] = -1;
 	pipes[2] = -1;
 	pipes[3] = -1;
+}
+
+char	**child_setup(t_command *cmd, t_env *env, int pipes[4])
+{
+	char	**envp;
+
+	envp = env_list_to_array(env);
+	signal(SIGINT, SIG_DFL);
+	signal(SIGQUIT, SIG_DFL);
+	redir_setup(cmd);
+	pipe_setup(cmd, &pipes[2], &pipes[0]);
+	return (envp);
+}
+
+/**
+ * Checks if the given command is a builtin that must
+ * be executed in the parent process.
+ * Builtins: cd, exit, unset, export (with arguments).
+ *
+ * @return 1 if the command is a parent builtin, 0 otherwise.
+ */
+int	is_parent_builtin(t_command *command)
+{
+	if (!command || !command->args || !command->args[0])
+		return (0);
+	if (ft_strcmp(command->args[0], "cd") == 0)
+		return (1);
+	if (ft_strcmp(command->args[0], "exit") == 0)
+		return (1);
+	if (ft_strcmp(command->args[0], "unset") == 0)
+		return (1);
+	if (ft_strcmp(command->args[0], "export") == 0)
+	{
+		if (command->args[1] == NULL)
+			return (0);
+		return (1);
+	}
+	return (0);
+}
+
+/**
+ * Executes a builtin command and returns its exit status.
+ * Supports: cd, echo, pwd, export, unset, env, exit.
+ *
+ * @return The exit status of the builtin command, or ERROR on failure.
+ */
+
+int	exec_builtin(t_command command, t_env *env, int status)
+{
+	if (!command.args || !command.args[0])
+		return (ERROR);
+	if (ft_strcmp(command.args[0], "cd") == 0)
+		return (ft_cd(command.args, env));
+	else if (ft_strcmp(command.args[0], "echo") == 0)
+		return (ft_echo(command.args));
+	else if (ft_strcmp(command.args[0], "pwd") == 0)
+		return (ft_pwd());
+	else if (ft_strcmp(command.args[0], "export") == 0)
+		return (ft_export(command.args, env));
+	else if (ft_strcmp(command.args[0], "unset") == 0)
+		return (ft_unset(command.args, env));
+	else if (ft_strcmp(command.args[0], "env") == 0)
+		return (ft_env(command.args, env));
+	else if (ft_strcmp(command.args[0], "exit") == 0)
+		return (ft_exit(command.args, status));
+	return (ERROR);
 }
