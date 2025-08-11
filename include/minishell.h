@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tklaus <tklaus@student.42.fr>              +#+  +:+       +#+        */
+/*   By: tomasklaus <tomasklaus@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/02 14:39:37 by dmalasek          #+#    #+#             */
-/*   Updated: 2025/08/09 17:43:11 by tklaus           ###   ########.fr       */
+/*   Updated: 2025/08/11 15:46:12 by tomasklaus       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -157,6 +157,7 @@ int							ft_unset(char **args, t_env *env);
 int							arg_count(char **args);
 int							validate_args(char **args, char *command_name,
 								int max_args, int min_args);
+int							is_valid_identifier(char *key);
 
 // src/cleanup/
 void						cleanup_env(t_env *env);

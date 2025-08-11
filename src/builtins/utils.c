@@ -6,7 +6,7 @@
 /*   By: tomasklaus <tomasklaus@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/05 14:07:22 by tomasklaus        #+#    #+#             */
-/*   Updated: 2025/07/30 22:35:55 by tomasklaus       ###   ########.fr       */
+/*   Updated: 2025/08/11 15:49:17 by tomasklaus       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,4 +40,22 @@ int	validate_args(char **args, char *command_name, int max_args, int min_args)
 		return (ERROR);
 	}
 	return (SUCCESS);
+}
+
+int	is_valid_identifier(char *key)
+{
+	int	i;
+
+	if (!key || key[0] == '\0')
+		return (0);
+	if (!(ft_isalpha(key[0]) || key[0] == '_'))
+		return (0);
+	i = 1;
+	while (key[i])
+	{
+		if (!(ft_isalnum(key[i]) || key[i] == '_'))
+			return (0);
+		i++;
+	}
+	return (1);
 }

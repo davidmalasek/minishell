@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   export.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dmalasek <dmalasek@student.42.fr>          +#+  +:+       +#+        */
+/*   By: tomasklaus <tomasklaus@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/04 20:57:23 by tomasklaus        #+#    #+#             */
-/*   Updated: 2025/08/03 18:49:47 by dmalasek         ###   ########.fr       */
+/*   Updated: 2025/08/11 16:11:47 by tomasklaus       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,22 +50,26 @@ int	change_arg(char *new_key, char *new_value, t_env *env)
 	return (new_arg(new_key, new_value, env));
 }
 
-static int	is_valid_identifier(char *key)
+char	*remove_all_quotes(const char *arg)
 {
-	int	i;
+	size_t	i;
+	size_t	j;
+	char	*res;
 
-	if (!key || key[0] == '\0')
-		return (0);
-	if (!(ft_isalpha(key[0]) || key[0] == '_'))
-		return (0);
-	i = 1;
-	while (key[i])
+	i = 0;
+	j = 0;
+	res = malloc(ft_strlen(arg) + 1);
+	if (!res)
+		return (NULL);
+	while (arg[i])
 	{
-		if (!(ft_isalnum(key[i]) || key[i] == '_'))
-			return (0);
-		i++;
+		if (arg[i] != '\'' && arg[i] != '\"')
+			res[j++] = arg[i++];
+		else
+			i++;
 	}
-	return (1);
+	res[j] = '\0';
+	return (res);
 }
 
 static int	export_one(char *arg, t_env *env)
@@ -74,25 +78,25 @@ static int	export_one(char *arg, t_env *env)
 	char	*key;
 	char	*value;
 	int		status;
-	char	*clean_value;
+	char	*clean_arg;
 
-	equal = ft_strchr(arg, '=');
+	clean_arg = remove_all_quotes(arg);
+	equal = ft_strchr(clean_arg, '=');
 	if (!equal)
 	{
-		if (is_valid_identifier(arg))
+		if (is_valid_identifier(clean_arg))
 			return (SUCCESS);
-		return (printf("export: invalid identifier: %s\n", arg), ERROR);
+		return (printf("export: invalid identifier: %s\n", clean_arg), ERROR);
 	}
-	if (equal == arg)
-		return (printf("export: invalid identifier: %s\n", arg), ERROR);
-	key = ft_substr(arg, 0, equal - arg);
+	if (equal == clean_arg)
+		return (printf("export: invalid identifier: %s\n", clean_arg), ERROR);
+	key = ft_substr(clean_arg, 0, equal - clean_arg);
 	if (!is_valid_identifier(key))
-		return (printf("export: invalid identifier: %s\n", arg), free(key),
-			ERROR);
+		return (printf("export: invalid identifier: %s\n", clean_arg),
+			free(key), ERROR);
 	value = ft_strdup(equal + 1);
-	clean_value = remove_quotes(value);
-	status = change_arg(key, clean_value, env);
-	return (free(key), free(value), free(clean_value), status);
+	status = change_arg(key, value, env);
+	return (free(key), free(value), free(clean_arg), status);
 }
 
 int	ft_export(char **args, t_env *env)

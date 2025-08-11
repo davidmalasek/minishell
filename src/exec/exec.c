@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tklaus <tklaus@student.42.fr>              +#+  +:+       +#+        */
+/*   By: tomasklaus <tomasklaus@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/22 12:27:04 by tomasklaus        #+#    #+#             */
-/*   Updated: 2025/08/09 17:52:00 by tklaus           ###   ########.fr       */
+/*   Updated: 2025/08/11 15:46:59 by tomasklaus       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,11 +29,9 @@ static void	exec_child_process(t_command *cmd, t_exec_context exec_context,
 	envp = child_setup(cmd, env, pipes);
 	if (is_builtin(cmd->args[0]))
 	{
-		if (is_parent_builtin(cmd))
-			exit(0);
 		*status = exec_builtin(*cmd, env, *status, exec_context);
 		free_str_array(envp);
-		exit(*status);
+		exit_shell(exec_context.command_list, exec_context.env, *status);
 	}
 	path = resolve_path(cmd->args[0], env);
 	if (path)
@@ -45,7 +43,7 @@ static void	exec_child_process(t_command *cmd, t_exec_context exec_context,
 		dup2(STDERR_FILENO, STDOUT_FILENO);
 	printf("minishell: command not found: %s\n", cmd->args[0]);
 	free_str_array(envp);
-	exit(127);
+	exit_shell(exec_context.command_list, exec_context.env, 127);
 }
 
 /**
@@ -102,11 +100,13 @@ static void	exec_command_loop(t_exec_context exec_context, int *status,
 	}
 }
 
-static void	wait_for_children(pid_t last_pid, int *status)
+static void	wait_for_children(pid_t last_pid, int *status,
+		t_exec_context exec_context)
 {
 	int		wstatus;
 	pid_t	wpid;
 
+	(void)exec_context;
 	wpid = wait(&wstatus);
 	while (wpid > 0)
 	{
@@ -140,7 +140,7 @@ int	exec(t_command *command_list, t_env *env, int *status)
 	exec_command_loop(exec_context, status, pipes, &last_pid);
 	if (pipes[0] > 0)
 		close(pipes[0]);
-	wait_for_children(last_pid, status);
+	wait_for_children(last_pid, status, exec_context);
 	setup_signal_handlers();
 	return (SUCCESS);
 }
