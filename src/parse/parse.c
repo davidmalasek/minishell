@@ -6,7 +6,7 @@
 /*   By: tklaus <tklaus@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/22 11:57:02 by dmalasek          #+#    #+#             */
-/*   Updated: 2025/08/09 17:47:20 by tklaus           ###   ########.fr       */
+/*   Updated: 2025/08/14 17:41:36 by tklaus           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,7 +101,7 @@ t_command	*parse(char *input, t_env *env, int *last_exit_status)
 
 	tokens = tokenize(input, env, *last_exit_status, &has_quotes);
 	if (!tokens)
-		return (NULL);
+		return (*last_exit_status = 1, NULL);
 	token_count = get_token_count(tokens);
 	if (token_count > 0 && tokens[token_count - 1].type == PIPE)
 	{

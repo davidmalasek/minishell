@@ -55,4 +55,38 @@ export: invalid identifier: hello"="2
 
 --------------------------------------------------------------
 
-unset 1 //melo by vratit error
+unset 1 //melo by vratit error ✅
+
+--------------------------------------------------------------
+LEAKS
+cat < d //no such file or directory ✅
+
+minishell ➜ export hello
+minishell ➜ env ✅
+
+cat << eof ctrl c
+
+cat | exit
+
+
+
+--------------------------------------------------------------------
+
+minishell ➜ echo -n hello"
+minishell: syntax error: unclosed quote
+minishell ➜ echo $?
+0
+//melo by vratit 1 ✅
+
+------------------------------------------------------------------
+
+minishell ➜ exit k k
+exit: too many arguments
+//melo by exit
+//bash: exit: k: numeric argument required ✅
+
+-----------------------------------------------------------------
+
+cat |
+
+

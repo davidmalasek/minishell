@@ -6,7 +6,7 @@
 /*   By: tklaus <tklaus@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/04 20:57:25 by tomasklaus        #+#    #+#             */
-/*   Updated: 2025/08/09 17:43:14 by tklaus           ###   ########.fr       */
+/*   Updated: 2025/08/14 17:41:23 by tklaus           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,8 +17,6 @@ int	ft_exit(char **args, int status, t_exec_context exec_context)
 	int	error;
 
 	error = 0;
-	if (validate_args(args, "exit", 2, 1) != SUCCESS)
-		return (ERROR);
 	if (args && args[1])
 	{
 		status = ft_safe_atoi(args[1], &error);
@@ -30,6 +28,8 @@ int	ft_exit(char **args, int status, t_exec_context exec_context)
 			status = 2;
 		}
 	}
+	if (validate_args(args, "exit", 2, 1) && !error)
+		return (ERROR);
 	ft_putstr_fd("Quitting session\n", 1);
 	exit_shell(exec_context.command_list, exec_context.env, status);
 	return (status);

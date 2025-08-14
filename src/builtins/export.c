@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   export.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tomasklaus <tomasklaus@student.42.fr>      +#+  +:+       +#+        */
+/*   By: tklaus <tklaus@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/04 20:57:23 by tomasklaus        #+#    #+#             */
-/*   Updated: 2025/08/11 16:11:47 by tomasklaus       ###   ########.fr       */
+/*   Updated: 2025/08/14 17:41:24 by tklaus           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,15 +85,17 @@ static int	export_one(char *arg, t_env *env)
 	if (!equal)
 	{
 		if (is_valid_identifier(clean_arg))
-			return (SUCCESS);
-		return (printf("export: invalid identifier: %s\n", clean_arg), ERROR);
+			return (free(clean_arg), SUCCESS);
+		return (printf("export: invalid identifier: %s\n", clean_arg),
+			free(clean_arg), ERROR);
 	}
 	if (equal == clean_arg)
-		return (printf("export: invalid identifier: %s\n", clean_arg), ERROR);
+		return (printf("export: invalid identifier: %s\n", clean_arg),
+			free(clean_arg), ERROR);
 	key = ft_substr(clean_arg, 0, equal - clean_arg);
 	if (!is_valid_identifier(key))
 		return (printf("export: invalid identifier: %s\n", clean_arg),
-			free(key), ERROR);
+			free(key), free(clean_arg), ERROR);
 	value = ft_strdup(equal + 1);
 	status = change_arg(key, value, env);
 	return (free(key), free(value), free(clean_arg), status);

@@ -23,6 +23,7 @@ SRC = src/main.c \
 	src/exec/exec_utils.c \
 	src/exec/utils.c \
 	src/exec/redir.c \
+	src/exec/redir_utils.c \
 	src/parse/preprocess_utils.c \
 	src/parse/tokenize_utils.c \
 	src/parse/tokenize_utils_2.c \

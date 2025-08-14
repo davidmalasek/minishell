@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tomasklaus <tomasklaus@student.42.fr>      +#+  +:+       +#+        */
+/*   By: tklaus <tklaus@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/02 14:39:37 by dmalasek          #+#    #+#             */
-/*   Updated: 2025/08/11 15:46:12 by tomasklaus       ###   ########.fr       */
+/*   Updated: 2025/08/14 17:43:47 by tklaus           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,7 @@ char						*ft_strjoin3(char const *s1, char const *s2,
 								char const *s3);
 int							setup_signal_handlers(void);
 void						sigint_handler(int signo);
+void						sigint_handler_child(int signo);
 
 /* PARSING */
 typedef struct s_token
@@ -137,12 +138,13 @@ char						*alloc_and_copy_token(const char *start,
 int							exec(t_command *command_list, t_env *env,
 								int *status);
 char						*resolve_path(char *command, t_env *env);
-int							redir_setup(t_command *command);
+int							redir_setup(t_command *command, t_env *env);
 int							is_parent_builtin(t_command *command);
 int							pipe_setup(t_command *command, int pipe_fd[2],
 								int prev_pipe[2]);
 int							is_builtin(char *str);
 void						free_str_array(char **arr);
+int							heredoc_loop(t_outfile_node *curr, int pipe_fd[2]);
 
 // src/builtins/
 int							ft_cd(char **args, t_env *env);

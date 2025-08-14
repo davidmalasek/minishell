@@ -6,7 +6,7 @@
 /*   By: tklaus <tklaus@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/03 15:16:59 by dmalasek          #+#    #+#             */
-/*   Updated: 2025/08/09 17:43:20 by tklaus           ###   ########.fr       */
+/*   Updated: 2025/08/14 17:41:32 by tklaus           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,12 @@ char	**child_setup(t_command *cmd, t_env *env, int pipes[4])
 	envp = env_list_to_array(env);
 	signal(SIGINT, SIG_DFL);
 	signal(SIGQUIT, SIG_DFL);
-	redir_setup(cmd);
+	if (redir_setup(cmd, env) || g_signal_interrupted)
+	{
+		free_str_array(envp);
+		exit_shell(cmd, env, EXIT_FAILURE);
+	}
+	signal(SIGQUIT, SIG_DFL);
 	pipe_setup(cmd, &pipes[2], &pipes[0]);
 	return (envp);
 }

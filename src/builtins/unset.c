@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   unset.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tomasklaus <tomasklaus@student.42.fr>      +#+  +:+       +#+        */
+/*   By: tklaus <tklaus@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/04 20:57:08 by tomasklaus        #+#    #+#             */
-/*   Updated: 2025/08/11 16:13:58 by tomasklaus       ###   ########.fr       */
+/*   Updated: 2025/08/14 17:41:25 by tklaus           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,6 @@ int	ft_unset(char **args, t_env *env)
 	{
 		if (!is_valid_identifier(args[i]))
 		{
-			printf("minishell: unset: `%s': not a valid identifier\n", args[i]);
 			status = 0;
 		}
 		if (!del_arg(args[i], env))

@@ -6,7 +6,7 @@
 /*   By: tklaus <tklaus@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/06 17:22:53 by tomasklaus        #+#    #+#             */
-/*   Updated: 2025/08/09 17:46:38 by tklaus           ###   ########.fr       */
+/*   Updated: 2025/08/14 17:43:38 by tklaus           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ int	input_redir(const char *infile, t_command *command)
 		{
 			fprintf(stderr, "minishell: %s: No such file or directory\n",
 				curr->filename);
-			exit(EXIT_FAILURE);
+			return (ERROR);
 		}
 		curr = curr->next;
 	}
@@ -94,52 +94,41 @@ int	output_redir(const char *outfile, int append)
  * Each line is written to a pipe, which is then duplicated to STDIN.
  */
 
-int	heredoc_redir(t_command *command)
+int	heredoc_redir(t_command *command, t_env *env)
 {
 	int				pipe_fd[2];
 	t_outfile_node	*curr;
-	char			*line;
 
+	signal(SIGINT, sigint_handler_child);
+	(void)env;
 	pipe(pipe_fd);
 	curr = command->heredoc_old;
-	while (curr)
-	{
-		while (1)
-		{
-			line = readline("> ");
-			if (!line || strcmp(line, curr->filename) == 0)
-				break ;
-			if (curr->next == NULL)
-				(write(pipe_fd[1], line, strlen(line)), write(pipe_fd[1], "\n",
-						1));
-			free(line);
-		}
-		curr = curr->next;
-	}
-	if (line)
-		free(line);
+	if (heredoc_loop(curr, pipe_fd))
+		return (ERROR);
+	signal(SIGINT, SIG_DFL);
 	return (close(pipe_fd[1]), dup2(pipe_fd[0], STDIN_FILENO),
 		close(pipe_fd[0]), SUCCESS);
 }
 
-int	redir_setup(t_command *command)
+int	redir_setup(t_command *command, t_env *env)
 {
 	t_outfile_node	*curr;
 	int				fd;
+	int				err;
 
+	err = 0;
 	if (command->infile)
-		input_redir(command->infile, command);
+		err = input_redir(command->infile, command);
 	if (command->heredoc_delim)
-		heredoc_redir(command);
+		err += heredoc_redir(command, env);
+	if (err)
+		return (ERROR);
 	curr = command->outfile_old;
 	while (curr)
 	{
 		fd = open(curr->filename, O_WRONLY | O_CREAT, 0644);
 		if (fd == -1)
-		{
-			perror("minishell: could not open file");
-			exit(EXIT_FAILURE);
-		}
+			return (EXIT_FAILURE);
 		else
 			close(fd);
 		curr = curr->next;

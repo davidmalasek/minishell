@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tomasklaus <tomasklaus@student.42.fr>      +#+  +:+       +#+        */
+/*   By: tklaus <tklaus@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/22 12:27:04 by tomasklaus        #+#    #+#             */
-/*   Updated: 2025/08/11 15:46:59 by tomasklaus       ###   ########.fr       */
+/*   Updated: 2025/08/14 17:41:33 by tklaus           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,7 @@ static void	exec_child_process(t_command *cmd, t_exec_context exec_context,
 	if (path)
 	{
 		execve(path, cmd->args, envp);
+		free_str_array(envp);
 		free(path);
 	}
 	if (cmd->outfile || cmd->pipe_to_next)
