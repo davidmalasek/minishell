@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec_utils.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tklaus <tklaus@student.42.fr>              +#+  +:+       +#+        */
+/*   By: tomasklaus <tomasklaus@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/03 15:16:59 by dmalasek          #+#    #+#             */
-/*   Updated: 2025/08/14 17:41:32 by tklaus           ###   ########.fr       */
+/*   Updated: 2025/08/14 23:30:48 by tomasklaus       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,21 +20,14 @@ void	setup_pipes(int pipes[4])
 	pipes[3] = -1;
 }
 
-char	**child_setup(t_command *cmd, t_env *env, int pipes[4])
+void	child_setup(t_command *cmd, t_env *env, int pipes[4])
 {
-	char	**envp;
-
-	envp = env_list_to_array(env);
 	signal(SIGINT, SIG_DFL);
 	signal(SIGQUIT, SIG_DFL);
 	if (redir_setup(cmd, env) || g_signal_interrupted)
-	{
-		free_str_array(envp);
 		exit_shell(cmd, env, EXIT_FAILURE);
-	}
 	signal(SIGQUIT, SIG_DFL);
 	pipe_setup(cmd, &pipes[2], &pipes[0]);
-	return (envp);
 }
 
 /**

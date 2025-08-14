@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tklaus <tklaus@student.42.fr>              +#+  +:+       +#+        */
+/*   By: tomasklaus <tomasklaus@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/02 14:39:37 by dmalasek          #+#    #+#             */
-/*   Updated: 2025/08/14 17:43:47 by tklaus           ###   ########.fr       */
+/*   Updated: 2025/08/14 23:31:18 by tomasklaus       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -233,7 +233,7 @@ void						all_heredocs(t_command *cmd, char *value);
 
 // src/exec/exec_utils.c
 void						setup_pipes(int pipes[4]);
-char						**child_setup(t_command *cmd, t_env *env,
+void						child_setup(t_command *cmd, t_env *env,
 								int pipes[4]);
 int							is_parent_builtin(t_command *command);
 int							exec_builtin(t_command command, t_env *env,

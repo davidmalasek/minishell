@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tklaus <tklaus@student.42.fr>              +#+  +:+       +#+        */
+/*   By: tomasklaus <tomasklaus@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/22 12:27:04 by tomasklaus        #+#    #+#             */
-/*   Updated: 2025/08/14 17:41:33 by tklaus           ###   ########.fr       */
+/*   Updated: 2025/08/14 23:37:50 by tomasklaus       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,16 +26,17 @@ static void	exec_child_process(t_command *cmd, t_exec_context exec_context,
 	t_env	*env;
 
 	env = exec_context.env;
-	envp = child_setup(cmd, env, pipes);
+	child_setup(cmd, env, pipes);
 	if (is_builtin(cmd->args[0]))
 	{
-		*status = exec_builtin(*cmd, env, *status, exec_context);
-		free_str_array(envp);
+		if(!is_parent_builtin(cmd))
+			*status = exec_builtin(*cmd, env, *status, exec_context); //idk
 		exit_shell(exec_context.command_list, exec_context.env, *status);
 	}
 	path = resolve_path(cmd->args[0], env);
 	if (path)
 	{
+		envp = env_list_to_array(env);
 		execve(path, cmd->args, envp);
 		free_str_array(envp);
 		free(path);
@@ -43,7 +44,6 @@ static void	exec_child_process(t_command *cmd, t_exec_context exec_context,
 	if (cmd->outfile || cmd->pipe_to_next)
 		dup2(STDERR_FILENO, STDOUT_FILENO);
 	printf("minishell: command not found: %s\n", cmd->args[0]);
-	free_str_array(envp);
 	exit_shell(exec_context.command_list, exec_context.env, 127);
 }
 
@@ -117,7 +117,11 @@ static void	wait_for_children(pid_t last_pid, int *status,
 			{
 				*status = 128 + WTERMSIG(wstatus);
 				if (WTERMSIG(wstatus) == SIGINT)
+				{
+					cleanup_env(exec_context.env);
+					cleanup_commands(exec_context.command_list);
 					write(STDOUT_FILENO, "\n", 1);
+				}
 			}
 			else if (WIFEXITED(wstatus))
 				*status = WEXITSTATUS(wstatus);

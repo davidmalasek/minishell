@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main_utils.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tklaus <tklaus@student.42.fr>              +#+  +:+       +#+        */
+/*   By: tomasklaus <tomasklaus@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/02 12:41:20 by dmalasek          #+#    #+#             */
-/*   Updated: 2025/08/14 17:41:39 by tklaus           ###   ########.fr       */
+/*   Updated: 2025/08/14 23:30:59 by tomasklaus       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,12 +50,6 @@ char	*get_input(t_env *env)
 	{
 		free(input);
 		return (NULL);
-	}
-	while (needs_continuation(input))
-	{
-		input = get_continuation_input(input);
-		if (!input)
-			return (NULL);
 	}
 	add_history(input);
 	return (input);
