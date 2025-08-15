@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tomasklaus <tomasklaus@student.42.fr>      +#+  +:+       +#+        */
+/*   By: tklaus <tklaus@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/22 12:27:04 by tomasklaus        #+#    #+#             */
-/*   Updated: 2025/08/14 23:37:50 by tomasklaus       ###   ########.fr       */
+/*   Updated: 2025/08/15 12:07:36 by tklaus           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,8 +29,8 @@ static void	exec_child_process(t_command *cmd, t_exec_context exec_context,
 	child_setup(cmd, env, pipes);
 	if (is_builtin(cmd->args[0]))
 	{
-		if(!is_parent_builtin(cmd))
-			*status = exec_builtin(*cmd, env, *status, exec_context); //idk
+		if (!is_parent_builtin(cmd))
+			*status = exec_builtin(*cmd, env, *status, exec_context);
 		exit_shell(exec_context.command_list, exec_context.env, *status);
 	}
 	path = resolve_path(cmd->args[0], env);
@@ -118,8 +118,6 @@ static void	wait_for_children(pid_t last_pid, int *status,
 				*status = 128 + WTERMSIG(wstatus);
 				if (WTERMSIG(wstatus) == SIGINT)
 				{
-					cleanup_env(exec_context.env);
-					cleanup_commands(exec_context.command_list);
 					write(STDOUT_FILENO, "\n", 1);
 				}
 			}

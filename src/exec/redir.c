@@ -6,7 +6,7 @@
 /*   By: tklaus <tklaus@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/06 17:22:53 by tomasklaus        #+#    #+#             */
-/*   Updated: 2025/08/15 11:09:34 by tklaus           ###   ########.fr       */
+/*   Updated: 2025/08/15 12:07:22 by tklaus           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,7 +100,7 @@ int	heredoc_redir(t_command *command, t_env *env)
 	t_outfile_node	*curr;
 
 	signal(SIGINT, sigint_handler_child);
-	signal(SIGQUIT,SIG_IGN);
+	signal(SIGQUIT, SIG_IGN);
 	(void)env;
 	pipe(pipe_fd);
 	curr = command->heredoc_old;

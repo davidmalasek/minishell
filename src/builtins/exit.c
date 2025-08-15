@@ -6,7 +6,7 @@
 /*   By: tklaus <tklaus@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/04 20:57:25 by tomasklaus        #+#    #+#             */
-/*   Updated: 2025/08/14 17:41:23 by tklaus           ###   ########.fr       */
+/*   Updated: 2025/08/15 12:07:03 by tklaus           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,10 @@ int	ft_exit(char **args, int status, t_exec_context exec_context)
 	error = 0;
 	if (args && args[1])
 	{
-		status = ft_safe_atoi(args[1], &error);
+		if ((args[1][0] == '-' || args[1][0] == '+') && args[1][1] == '\0')
+			error = 1;
+		else
+			status = ft_safe_atoi(args[1], &error);
 		if (error)
 		{
 			ft_putstr_fd("exit: ", 2);

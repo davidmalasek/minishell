@@ -89,4 +89,8 @@ exit: too many arguments
 
 cat | ✅
 
+--------------------------------------------------------------
+
+minishell ➜ exit - //exit code by mel byt 2 a je 0
+
 

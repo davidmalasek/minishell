@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main_utils.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tomasklaus <tomasklaus@student.42.fr>      +#+  +:+       +#+        */
+/*   By: tklaus <tklaus@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/02 12:41:20 by dmalasek          #+#    #+#             */
-/*   Updated: 2025/08/14 23:30:59 by tomasklaus       ###   ########.fr       */
+/*   Updated: 2025/08/15 12:06:34 by tklaus           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ char	*get_input(t_env *env)
 	if (input == NULL)
 	{
 		write(STDOUT_FILENO, "exit\n", 5);
-		exit_shell(NULL, env, 2);
+		exit_shell(NULL, env, 0);
 	}
 	if (input[0] == '\0')
 	{

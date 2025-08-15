@@ -6,7 +6,7 @@
 /*   By: tklaus <tklaus@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/07 21:25:18 by tomasklaus        #+#    #+#             */
-/*   Updated: 2025/08/15 10:58:22 by tklaus           ###   ########.fr       */
+/*   Updated: 2025/08/15 12:07:47 by tklaus           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,6 @@ void	sigint_handler_child(int signo)
 		rl_end = 0;
 	}
 	rl_on_new_line();
-	//exit(130);
 }
 
 int	setup_signal_handlers(void)
