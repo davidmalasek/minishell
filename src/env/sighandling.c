@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   sighandling.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tomasklaus <tomasklaus@student.42.fr>      +#+  +:+       +#+        */
+/*   By: tklaus <tklaus@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/07 21:25:18 by tomasklaus        #+#    #+#             */
-/*   Updated: 2025/08/14 23:30:43 by tomasklaus       ###   ########.fr       */
+/*   Updated: 2025/08/15 10:58:22 by tklaus           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ void	sigint_handler_child(int signo)
 		rl_end = 0;
 	}
 	rl_on_new_line();
-	exit(130);
+	//exit(130);
 }
 
 int	setup_signal_handlers(void)

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec_utils.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tomasklaus <tomasklaus@student.42.fr>      +#+  +:+       +#+        */
+/*   By: tklaus <tklaus@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/03 15:16:59 by dmalasek          #+#    #+#             */
-/*   Updated: 2025/08/14 23:30:48 by tomasklaus       ###   ########.fr       */
+/*   Updated: 2025/08/15 11:12:03 by tklaus           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,8 +24,12 @@ void	child_setup(t_command *cmd, t_env *env, int pipes[4])
 {
 	signal(SIGINT, SIG_DFL);
 	signal(SIGQUIT, SIG_DFL);
-	if (redir_setup(cmd, env) || g_signal_interrupted)
+	if (redir_setup(cmd, env))
+	{
+		if (g_signal_interrupted)
+			exit_shell(cmd, env, 130);
 		exit_shell(cmd, env, EXIT_FAILURE);
+	}
 	signal(SIGQUIT, SIG_DFL);
 	pipe_setup(cmd, &pipes[2], &pipes[0]);
 }
