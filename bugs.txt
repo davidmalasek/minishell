@@ -93,4 +93,18 @@ cat | ✅
 
 minishell ➜ exit - //exit code by mel byt 2 a je 0
 
+--------------------------------------------------------------
+
+unset LANGUAGE
+env
+//kdyz unsetuju prvni (head), hodi to double free error
+
+--------------------------------------------------------------
+
+cat | ls < a | cat //leak kdyz a neexistuje
+
+-----------------------------------------------------------------
+
+echo a'<'ajdfksa //quotes by mely byt pryc
+
 
