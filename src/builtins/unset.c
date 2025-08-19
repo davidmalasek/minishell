@@ -6,18 +6,18 @@
 /*   By: tklaus <tklaus@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/04 20:57:08 by tomasklaus        #+#    #+#             */
-/*   Updated: 2025/08/14 17:41:25 by tklaus           ###   ########.fr       */
+/*   Updated: 2025/08/19 16:53:16 by tklaus           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
-int	del_arg(char *new_key, t_env *env)
+int	del_arg(char *new_key, t_env **env)
 {
 	t_env	*current;
 	t_env	*prev;
 
-	current = env;
+	current = *env;
 	prev = NULL;
 	while (current)
 	{
@@ -25,6 +25,8 @@ int	del_arg(char *new_key, t_env *env)
 		{
 			if (prev)
 				prev->next = current->next;
+			else
+				*env = current->next;
 			free(current->key);
 			free(current->value);
 			free(current);
@@ -36,7 +38,7 @@ int	del_arg(char *new_key, t_env *env)
 	return (ERROR);
 }
 
-int	ft_unset(char **args, t_env *env)
+int	ft_unset(char **args, t_env **env)
 {
 	int	i;
 	int	status;

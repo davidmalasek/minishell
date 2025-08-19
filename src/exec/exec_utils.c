@@ -6,11 +6,21 @@
 /*   By: tklaus <tklaus@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/03 15:16:59 by dmalasek          #+#    #+#             */
-/*   Updated: 2025/08/15 11:12:03 by tklaus           ###   ########.fr       */
+/*   Updated: 2025/08/19 16:54:03 by tklaus           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
+
+void	no_command(t_command *cmd, t_exec_context exec_context, t_env *env,
+		char *path)
+{
+	free(path);
+	if (cmd->outfile || cmd->pipe_to_next)
+		dup2(STDERR_FILENO, STDOUT_FILENO);
+	printf("minishell: command not found: %s\n", cmd->args[0]);
+	exit_shell(exec_context.command_list, env, 127);
+}
 
 void	setup_pipes(int pipes[4])
 {
@@ -20,18 +30,23 @@ void	setup_pipes(int pipes[4])
 	pipes[3] = -1;
 }
 
-void	child_setup(t_command *cmd, t_env *env, int pipes[4])
+int	child_setup(t_command *cmd, t_env *env, int pipes[4])
 {
 	signal(SIGINT, SIG_DFL);
 	signal(SIGQUIT, SIG_DFL);
 	if (redir_setup(cmd, env))
 	{
-		if (g_signal_interrupted)
-			exit_shell(cmd, env, 130);
-		exit_shell(cmd, env, EXIT_FAILURE);
+		if (pipes[0] > 0)
+			close(pipes[0]);
+		if (pipes[3] > 0)
+			close(pipes[3]);
+		if (pipes[2] > 0)
+			close(pipes[2]);
+		return (ERROR);
 	}
 	signal(SIGQUIT, SIG_DFL);
 	pipe_setup(cmd, &pipes[2], &pipes[0]);
+	return (SUCCESS);
 }
 
 /**
@@ -67,23 +82,23 @@ int	is_parent_builtin(t_command *command)
  * @return The exit status of the builtin command, or ERROR on failure.
  */
 
-int	exec_builtin(t_command command, t_env *env, int status,
+int	exec_builtin(t_command command, t_env **env, int status,
 		t_exec_context exec_context)
 {
 	if (!command.args || !command.args[0])
 		return (ERROR);
 	if (ft_strcmp(command.args[0], "cd") == 0)
-		return (ft_cd(command.args, env));
+		return (ft_cd(command.args, *env));
 	else if (ft_strcmp(command.args[0], "echo") == 0)
 		return (ft_echo(command.args));
 	else if (ft_strcmp(command.args[0], "pwd") == 0)
 		return (ft_pwd());
 	else if (ft_strcmp(command.args[0], "export") == 0)
-		return (ft_export(command.args, env));
+		return (ft_export(command.args, *env));
 	else if (ft_strcmp(command.args[0], "unset") == 0)
 		return (ft_unset(command.args, env));
 	else if (ft_strcmp(command.args[0], "env") == 0)
-		return (ft_env(command.args, env));
+		return (ft_env(command.args, *env));
 	else if (ft_strcmp(command.args[0], "exit") == 0)
 		return (ft_exit(command.args, status, exec_context));
 	return (ERROR);

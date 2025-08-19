@@ -6,7 +6,7 @@
 /*   By: tklaus <tklaus@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 15:30:36 by dmalasek          #+#    #+#             */
-/*   Updated: 2025/08/09 17:46:12 by tklaus           ###   ########.fr       */
+/*   Updated: 2025/08/19 16:53:37 by tklaus           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,11 +62,11 @@ int			g_signal_interrupted = 0;
 		cmd++;
 	}
 } */
-static void	execute_and_cleanup(char *input, t_env *env, int *status)
+static void	execute_and_cleanup(char *input, t_env **env, int *status)
 {
 	t_command	*command_list;
 
-	command_list = parse(input, env, status);
+	command_list = parse(input, *env, status);
 	if (!command_list)
 	{
 		free(input);
@@ -90,7 +90,7 @@ static void	execute_and_cleanup(char *input, t_env *env, int *status)
  * passing the input, environment, and status pointer.
  */
 
-int	main_loop(t_env *env)
+int	main_loop(t_env **env)
 {
 	int		status;
 	char	*input;
@@ -98,7 +98,7 @@ int	main_loop(t_env *env)
 	status = 0;
 	while (1)
 	{
-		input = get_input(env);
+		input = get_input(*env);
 		if (handle_empty_or_signal(input, &status))
 			continue ;
 		if (handle_invalid_input(input, &status))
@@ -115,7 +115,7 @@ int	main(int argc, char **argv, char **envp)
 	(void)argc;
 	(void)argv;
 	env = initialize_shell(envp);
-	main_loop(env);
+	main_loop(&env);
 	cleanup_env(env);
 	return (0);
 }

@@ -6,7 +6,7 @@
 /*   By: tklaus <tklaus@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/22 12:27:04 by tomasklaus        #+#    #+#             */
-/*   Updated: 2025/08/15 12:07:36 by tklaus           ###   ########.fr       */
+/*   Updated: 2025/08/19 16:53:14 by tklaus           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,13 +25,18 @@ static void	exec_child_process(t_command *cmd, t_exec_context exec_context,
 	char	*path;
 	t_env	*env;
 
-	env = exec_context.env;
-	child_setup(cmd, env, pipes);
+	env = *exec_context.env;
+	if (child_setup(cmd, env, pipes))
+	{
+		if (g_signal_interrupted)
+			exit_shell(exec_context.command_list, env, 130);
+		exit_shell(exec_context.command_list, env, EXIT_FAILURE);
+	}
 	if (is_builtin(cmd->args[0]))
 	{
 		if (!is_parent_builtin(cmd))
-			*status = exec_builtin(*cmd, env, *status, exec_context);
-		exit_shell(exec_context.command_list, exec_context.env, *status);
+			*status = exec_builtin(*cmd, &env, *status, exec_context);
+		exit_shell(exec_context.command_list, env, *status);
 	}
 	path = resolve_path(cmd->args[0], env);
 	if (path)
@@ -39,12 +44,8 @@ static void	exec_child_process(t_command *cmd, t_exec_context exec_context,
 		envp = env_list_to_array(env);
 		execve(path, cmd->args, envp);
 		free_str_array(envp);
-		free(path);
 	}
-	if (cmd->outfile || cmd->pipe_to_next)
-		dup2(STDERR_FILENO, STDOUT_FILENO);
-	printf("minishell: command not found: %s\n", cmd->args[0]);
-	exit_shell(exec_context.command_list, exec_context.env, 127);
+	no_command(cmd, exec_context, env, path);
 }
 
 /**
@@ -128,7 +129,7 @@ static void	wait_for_children(pid_t last_pid, int *status,
 	}
 }
 
-int	exec(t_command *command_list, t_env *env, int *status)
+int	exec(t_command *command_list, t_env **env, int *status)
 {
 	int				pipes[4];
 	pid_t			last_pid;

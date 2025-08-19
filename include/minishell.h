@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tomasklaus <tomasklaus@student.42.fr>      +#+  +:+       +#+        */
+/*   By: tklaus <tklaus@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/02 14:39:37 by dmalasek          #+#    #+#             */
-/*   Updated: 2025/08/14 23:31:18 by tomasklaus       ###   ########.fr       */
+/*   Updated: 2025/08/19 16:51:24 by tklaus           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,7 +85,7 @@ typedef struct s_command
 typedef struct s_exec_context
 {
 	t_command				*command_list;
-	t_env					*env;
+	t_env					**env;
 }							t_exec_context;
 
 // src/main.c
@@ -135,7 +135,7 @@ char						*alloc_and_copy_token(const char *start,
 
 /* EXECUTION */
 // src/exec/
-int							exec(t_command *command_list, t_env *env,
+int							exec(t_command *command_list, t_env **env,
 								int *status);
 char						*resolve_path(char *command, t_env *env);
 int							redir_setup(t_command *command, t_env *env);
@@ -154,7 +154,7 @@ int							ft_exit(char **args, int status,
 								t_exec_context exec_context);
 int							ft_export(char **args, t_env *env);
 int							ft_pwd(void);
-int							ft_unset(char **args, t_env *env);
+int							ft_unset(char **args, t_env **env);
 
 int							arg_count(char **args);
 int							validate_args(char **args, char *command_name,
@@ -233,11 +233,14 @@ void						all_heredocs(t_command *cmd, char *value);
 
 // src/exec/exec_utils.c
 void						setup_pipes(int pipes[4]);
-void						child_setup(t_command *cmd, t_env *env,
+int							child_setup(t_command *cmd, t_env *env,
 								int pipes[4]);
 int							is_parent_builtin(t_command *command);
-int							exec_builtin(t_command command, t_env *env,
+int							exec_builtin(t_command command, t_env **env,
 								int status, t_exec_context exec_context);
+void						no_command(t_command *cmd,
+								t_exec_context exec_context, t_env *env,
+								char *path);
 
 // Define the global variable for signal interruption
 extern int					g_signal_interrupted;
