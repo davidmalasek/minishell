@@ -6,67 +6,134 @@
 /*   By: dmalasek <dmalasek@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/02 12:05:45 by dmalasek          #+#    #+#             */
-/*   Updated: 2025/08/04 11:07:04 by dmalasek         ###   ########.fr       */
+/*   Updated: 2025/09/02 12:37:58 by dmalasek         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
 /**
- * Returns the token type for shell operators (|, <, >, etc.).
+ * Expands the contents of a double-quoted
+ * substring and copies the result into the output buffer.
  */
-int	get_operator_token_type(char *component)
+void	expand_copy_double(const char *component, size_t ij[2], void **bundle,
+		size_t *w)
 {
-	if (ft_strcmp(component, "|") == 0)
-		return (PIPE);
-	if (ft_strcmp(component, "<<") == 0)
-		return (HEREDOC);
-	if (ft_strcmp(component, "<") == 0)
-		return (REDIR_IN);
-	if (ft_strcmp(component, ">>") == 0)
-		return (APPEND_OUT);
-	if (ft_strcmp(component, ">") == 0)
-		return (REDIR_OUT);
-	return (-1);
+	char	*quoted_segment;
+	char	*expanded;
+	size_t	elen;
+
+	quoted_segment = ft_substr(component, ij[0], ij[1] - ij[0] + 1);
+	if (quoted_segment)
+	{
+		expanded = expand_in_double_quotes(quoted_segment, (t_env *)bundle[0],
+				*(int *)bundle[2]);
+		free(quoted_segment);
+		if (expanded)
+		{
+			elen = ft_strlen(expanded);
+			ft_memcpy((char *)bundle[1] + *w, expanded, elen);
+			*w += elen;
+			free(expanded);
+		}
+	}
 }
 
 /**
- * Handles a single-quoted string.
+ * Processes a single-quoted segment by copying
+ * its contents into the result and returning the
+ * next index to continue parsing.
  */
-char	*handle_single_quoted(char *component)
+size_t	process_single(const char *c, size_t i, char *res, size_t *w)
 {
-	return (remove_quotes(component));
+	size_t	len;
+	size_t	j;
+	size_t	range[2];
+
+	len = ft_strlen(c);
+	j = find_end(c, i, len, '\'');
+	if (j > i + 1)
+	{
+		range[0] = i + 1;
+		range[1] = j;
+		copy_inner(res, w, c, range);
+	}
+	if (j >= len)
+		return (len);
+	return (j + 1);
 }
 
 /**
- * Handles a double-quoted string.
+ * Processes a double-quoted segment by expanding
+ * its contents and copying the result into the output
+ * buffer, then returns the next parsing index.
  */
-char	*handle_double_quoted(char *component, t_env *env, int last_exit_status)
+size_t	process_double(const char *c, size_t i, void **bundle, size_t *w)
 {
-	return (expand_in_double_quotes(component, env, last_exit_status));
+	size_t	len;
+	size_t	j;
+	size_t	ij[2];
+
+	len = ft_strlen(c);
+	j = find_end(c, i, len, '\"');
+	if (j >= i + 1)
+	{
+		ij[0] = i;
+		ij[1] = j;
+		expand_copy_double(c, ij, bundle, w);
+	}
+	if (j >= len)
+		return (len);
+	return (j + 1);
 }
 
 /**
- * Handles a token that starts with $.
+ * Removes quote delimiters from a string, expanding
+ * double-quoted segments and copying the processed
+ * content into a new buffer.
  */
-char	*handle_variable_component(char *component, t_env *env,
-		int last_exit_status)
+char	*remove_quote_delimiters(const char *comp, t_env *env, int last_exit)
 {
-	if (ft_strcmp(component, "$?") == 0)
-		return (ft_itoa(last_exit_status));
-	return (expand_variable(component, env, last_exit_status));
+	size_t	i;
+	size_t	write_idx;
+	void	*bundle[3];
+	char	*res;
+
+	if (!comp)
+		return (NULL);
+	res = malloc(ft_strlen(comp) + 1);
+	if (!res)
+		return (NULL);
+	i = 0;
+	write_idx = 0;
+	bundle[0] = env;
+	bundle[1] = res;
+	bundle[2] = &last_exit;
+	while (i < ft_strlen(comp))
+	{
+		if (comp[i] == '\'')
+			i = process_single(comp, i, res, &write_idx);
+		else if (comp[i] == '\"')
+			i = process_double(comp, i, bundle, &write_idx);
+		else
+			res[write_idx++] = comp[i++];
+	}
+	return (res[write_idx] = '\0', res);
 }
 
 /**
- * Processes a word token, handling quotes and variable expansion.
+ * Processes a word token by handling quotes or
+ * variable expansion and returns the resulting string.
  */
 char	*process_word_token(char *component, t_env *env, int last_exit_status)
 {
-	if (is_single_quoted(component))
-		return (handle_single_quoted(component));
+	if (!component)
+		return (NULL);
 	if (is_double_quoted(component))
-		return (handle_double_quoted(component, env, last_exit_status));
+		return (expand_in_double_quotes(component, env, last_exit_status));
 	if (component[0] == '$')
 		return (handle_variable_component(component, env, last_exit_status));
+	if (ft_strchr(component, '\'') || ft_strchr(component, '\"'))
+		return (remove_quote_delimiters(component, env, last_exit_status));
 	return (remove_quotes(component));
 }

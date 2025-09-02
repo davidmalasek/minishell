@@ -28,6 +28,7 @@ SRC = src/main.c \
 	src/parse/tokenize_utils.c \
 	src/parse/tokenize_utils_2.c \
 	src/parse/tokenize_utils_3.c \
+	src/parse/tokenize_utils_4.c \
 	src/parse/parse_utils.c \
 	src/parse/parse_utils_2.c \
 	src/parse/parse_utils_3.c \

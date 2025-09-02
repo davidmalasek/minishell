@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tklaus <tklaus@student.42.fr>              +#+  +:+       +#+        */
+/*   By: dmalasek <dmalasek@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/02 14:39:37 by dmalasek          #+#    #+#             */
-/*   Updated: 2025/08/19 16:51:24 by tklaus           ###   ########.fr       */
+/*   Updated: 2025/09/02 12:38:58 by dmalasek         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -200,13 +200,19 @@ char						*build_result_from_parts(char *before,
 
 // src/parse/tokenize_utils_3.c
 int							get_operator_token_type(char *component);
-char						*handle_single_quoted(char *component);
-char						*handle_double_quoted(char *component, t_env *env,
-								int last_exit_status);
 char						*handle_variable_component(char *component,
 								t_env *env, int last_exit_status);
 char						*process_word_token(char *component, t_env *env,
 								int last_exit_status);
+
+// src/parse/tokenize_utils_4.c
+int							get_operator_token_type(char *component);
+char						*handle_variable_component(char *component,
+								t_env *env, int last_exit_status);
+size_t						find_end(const char *s, size_t i, size_t len,
+								char q);
+void						copy_inner(char *dst, size_t *w, const char *src,
+								size_t range[2]);
 
 // src/parse/parse_utils.c
 int							handle_redir_out(t_command *cmd, t_token *tokens,
