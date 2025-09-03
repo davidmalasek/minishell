@@ -6,7 +6,7 @@
 /*   By: tklaus <tklaus@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/02 12:25:07 by dmalasek          #+#    #+#             */
-/*   Updated: 2025/08/09 17:46:54 by tklaus           ###   ########.fr       */
+/*   Updated: 2025/09/03 13:30:18 by tklaus           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,6 +67,9 @@ void	free_commands(t_command *commands, size_t count)
 		free(commands[i].infile);
 		free(commands[i].outfile);
 		free(commands[i].heredoc_delim);
+		cleanup_file_list(commands[i].outfile_old);
+		cleanup_file_list(commands[i].infile_old);
+		cleanup_file_list(commands[i].heredoc_old);
 		i++;
 	}
 	free(commands);
